@@ -1,0 +1,302 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 40% 98%;
+    --foreground: 222.2 47.4% 11.2%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 222.2 47.4% 11.2%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 47.4% 11.2%;
+
+    --primary: 250 47.4% 50%;
+    --primary-foreground: 210 40% 98%;
+
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+
+    --accent: 250 47.4% 94%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 250 47.4% 50%;
+
+    --radius: 0.75rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  * {
+    @apply border-border selection:bg-primary/10 selection:text-primary;
+  }
+
+  html {
+    @apply scroll-smooth;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "ss01", "ss02", "cv01", "cv02", "cv03";
+  }
+
+  /* Hide scrollbar but allow scrolling */
+  .no-scrollbar {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Glassmorphism */
+  .glass {
+    @apply bg-white/70 backdrop-blur-xl border border-white/30 shadow-lg;
+  }
+
+  .glass-card {
+    @apply bg-white/50 backdrop-blur-md border border-white/30 shadow-sm;
+  }
+
+  /* Text effects */
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+
+@layer components {
+  .link-hover {
+    @apply relative after:absolute after:bottom-0 after:left-0 after:h-[1px] after:w-0 after:bg-primary after:transition-all after:duration-300 hover:after:w-full;
+  }
+
+  .btn-hover {
+    @apply relative overflow-hidden transition-all duration-300 before:absolute before:inset-0 before:-z-10 before:translate-y-full before:rounded-md before:bg-primary before:transition-transform before:duration-300 hover:text-background hover:before:translate-y-0;
+  }
+
+  .section-container {
+    @apply container mx-auto max-w-6xl px-4 py-16 md:px-6 md:py-24;
+  }
+
+  .heading-xl {
+    @apply font-display text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl;
+  }
+
+  .heading-lg {
+    @apply font-display text-3xl font-bold tracking-tight sm:text-4xl;
+  }
+
+  .heading-md {
+    @apply font-display text-2xl font-bold tracking-tight sm:text-3xl;
+  }
+
+  .subheading {
+    @apply text-sm font-medium uppercase tracking-widest text-muted-foreground;
+  }
+}
+
+.page-transition-enter {
+  opacity: 0;
+  transform: translateY(8px);
+}
+
+.page-transition-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 400ms, transform 400ms;
+}
+
+.page-transition-exit {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.page-transition-exit-active {
+  opacity: 0;
+  transform: translateY(-8px);
+  transition: opacity 400ms, transform 400ms;
+}
+
+
+/* globals.css */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+@keyframes flowLight {
+  0% {
+    transform: translateX(-100%);
+  }
+
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+.animate-flowLight {
+  animation: flowLight 3s linear infinite;
+}
+
+
+@keyframes clickEffect {
+  0% {
+    transform: scale(0);
+    opacity: 1;
+  }
+
+  100% {
+    transform: scale(10);
+    opacity: 0;
+  }
+}
+
+.animate-clickEffect {
+  animation: clickEffect 0.6s ease-out forwards;
+  position: fixed;
+  transform: translate(-50%, -50%);
+  background: radial-gradient(circle, #6124b1, rgba(255, 0, 255, 0));
+
+}
+
+
+@keyframes gradient-flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient-text {
+  animation: gradient-flow 2s ease infinite;
+}
+
+
+.rainbow-text {
+  background: linear-gradient(
+    90deg,
+    #ef4444, /* red */
+    #f59e0b, /* yellow */
+    #10b981, /* green */
+    #3b82f6, /* blue */
+    #8b5cf6, /* purple */
+    #ec4899  /* pink */
+  );
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: rainbow-flow 3s linear infinite;
+}
+
+@keyframes rainbow-flow {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+
+
+
+
+/* Shimmer light moving left → right only */
+.shimmer-light::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%; /* fully off-screen left */
+  width: 200%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 20%,
+    rgba(255, 255, 255, 0.8) 50%,
+    rgba(255, 255, 255, 0) 80%
+  );
+  animation: shimmer-move 4s linear infinite;
+}
+
+@keyframes shimmer-move {
+  0% {
+    transform: translateX(-100%);
+    opacity: 0;
+  }
+  10% {
+    opacity: 1;
+  }
+  80% {
+    transform: translateX(100%);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(100%);
+    opacity: 0; /* fade out at the end */
+  }
+}
+
+
+
+
+@keyframes bounce-shake {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  20% {
+    transform: translateY(-12px) rotate(-3deg);
+  }
+  40% {
+    transform: translateY(0) rotate(3deg);
+  }
+  60% {
+    transform: translateY(-6px) rotate(-2deg);
+  }
+  80% {
+    transform: translateY(0) rotate(2deg);
+  }
+}
+
+.animate-bounce-shake {
+  animation: bounce-shake 1s ease-in-out;
+  animation-iteration-count: infinite;
+  animation-delay: 4s; 
+}
+
+
+
+
+
+@keyframes marquee {
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 20s linear infinite;
+}
