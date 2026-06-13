@@ -62,33 +62,33 @@ export default function Services() {
             image: "./mobile.png",
             cardBg: "from-green-50/50 to-emerald-50/30"
         },
-        {
-            title: "Automation",
-            shortDesc: "Intelligent workflow automation for your business",
-            fullDesc: "I help businesses automate repetitive tasks and complex workflows using advanced tools like n8n and custom integrations. From email automation to sophisticated business processes, I create solutions that save time, reduce errors, and boost productivity.",
-            icon: <Workflow className="h-8 w-8" />,
-            image: "./auto.jpeg",
-            iconBg: "bg-gradient-to-br from-purple-500 to-violet-500",
-            cardBg: "from-purple-50/50 to-violet-50/30"
-        },
-        {
-            title: "Cloud Solutions",
-            shortDesc: "Scalable cloud infrastructure and DevOps excellence",
-            fullDesc: "I design and implement robust cloud infrastructure using AWS and Docker. My DevOps expertise includes CI/CD pipelines, automated deployments, comprehensive monitoring, and intelligent scaling solutions for rapidly growing businesses.",
-            icon: <Cloud className="h-8 w-8" />,
-            image: "./cloud.jpeg",
-            iconBg: "bg-gradient-to-br from-orange-500 to-yellow-500",
-            cardBg: "from-orange-50/50 to-yellow-50/30"
-        },
-        {
-            title: "WordPress Solutions",
-            shortDesc: "Custom WordPress development and e-commerce",
-            fullDesc: "I create custom WordPress themes, powerful plugins, and feature-rich WooCommerce stores. From simple blogs to complex e-commerce platforms, I provide solutions that are easy to manage, built for performance, and optimized for search engines.",
-            icon: <Layout className="h-8 w-8" />,
-            image: "https://images.unsplash.com/photo-1555421689-d68471e189f2?w=400&h=250&fit=crop&crop=entropy&auto=format",
-            iconBg: "bg-gradient-to-br from-indigo-500 to-blue-500",
-            cardBg: "from-indigo-50/50 to-blue-50/30"
-        },
+        // {
+        //     title: "Automation",
+        //     shortDesc: "Intelligent workflow automation for your business",
+        //     fullDesc: "I help businesses automate repetitive tasks and complex workflows using advanced tools like n8n and custom integrations. From email automation to sophisticated business processes, I create solutions that save time, reduce errors, and boost productivity.",
+        //     icon: <Workflow className="h-8 w-8" />,
+        //     image: "./auto.jpeg",
+        //     iconBg: "bg-gradient-to-br from-purple-500 to-violet-500",
+        //     cardBg: "from-purple-50/50 to-violet-50/30"
+        // },
+        // {
+        //     title: "Cloud Solutions",
+        //     shortDesc: "Scalable cloud infrastructure and DevOps excellence",
+        //     fullDesc: "I design and implement robust cloud infrastructure using AWS and Docker. My DevOps expertise includes CI/CD pipelines, automated deployments, comprehensive monitoring, and intelligent scaling solutions for rapidly growing businesses.",
+        //     icon: <Cloud className="h-8 w-8" />,
+        //     image: "./cloud.jpeg",
+        //     iconBg: "bg-gradient-to-br from-orange-500 to-yellow-500",
+        //     cardBg: "from-orange-50/50 to-yellow-50/30"
+        // },
+        // {
+        //     title: "WordPress Solutions",
+        //     shortDesc: "Custom WordPress development and e-commerce",
+        //     fullDesc: "I create custom WordPress themes, powerful plugins, and feature-rich WooCommerce stores. From simple blogs to complex e-commerce platforms, I provide solutions that are easy to manage, built for performance, and optimized for search engines.",
+        //     icon: <Layout className="h-8 w-8" />,
+        //     image: "https://images.unsplash.com/photo-1555421689-d68471e189f2?w=400&h=250&fit=crop&crop=entropy&auto=format",
+        //     iconBg: "bg-gradient-to-br from-indigo-500 to-blue-500",
+        //     cardBg: "from-indigo-50/50 to-blue-50/30"
+        // },
         {
             title: "AI Agents & Bots",
             shortDesc: "Intelligent conversational solutions",

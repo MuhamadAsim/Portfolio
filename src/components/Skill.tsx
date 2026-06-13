@@ -6,7 +6,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
 const skills = [
-  "ReactJS", "ExpressJS", "NodeJS", "Flutter", "NextJS",
+  "ReactJS", "ExpressJS", "NodeJS", "React Native", "NextJS",
   "MongoDB", "SQL", "n8n", "Roboflow", "Postman", "Selenium", "AI Integration",
   "FastAPI", "Python", "JavaScript","TypeScript", "HTML & CSS", 
   "Tailwind CSS", "Gsap", "Git/Github", "Docker", "AWS",

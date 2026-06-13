@@ -15,10 +15,10 @@ const botResponses: Record<string, string> = {
   cgpa: "Muhammad's CGPA is 3.72",
   contact: "You can contact Muhammad via email at muhammadasim123525@gmail.com or by phone at 03297208637.",
   location: "Muhammad is based in Multan, Pakistan and can travel to Lahore for meetings or work.",
-  education: "Muhammad is a Computer Science student in his 5th semester at the University of Engineering and Technology Lahore. He completed his FSc from Punjab College Multan (2021-2023) with 86% marks, and his Matric from FG Public High School Multan (2019-2021) with 95% marks.",
-  experience: "Muhammad has over 6 months of professional experience as a full-stack developer working in a company and handling client projects. Additionally, he has freelancing experience for over 6 months, managing end-to-end web and mobile development projects.",
+  education: "Muhammad is a Computer Science student in his 7th semester at the University of Engineering and Technology Lahore. He completed his FSc from Punjab College Multan (2021-2023) with 86% marks, and his Matric from FG Public High School Multan (2019-2021) with 95% marks.",
+  experience: "Muhammad has over One Year of professional experience as a full-stack developer working in a company and handling client projects. Additionally, he has freelancing experience for over 6 months, managing end-to-end web and mobile development projects.",
   about: "Muhammad Asim is a Full Stack Developer passionate about building web and mobile applications, integrating AI, and solving complex problems through code. He is experienced in both frontend and backend development, as well as handling clients and delivering projects professionally.",
-  projects: "Muhammad has worked on SpeakFlow Hub (an AI voice assistant), a Social Media App (Instagram clone), a Realtime Chat App built in Flutter + Supabase, a TikTok-like app in Flutter, and several web applications using React, Angular, and NodeJS.",
+  projects: "Muhammad has worked on SpeakFlow Hub (an AI voice assistant), a Social Media App (Instagram clone), a Realtime Chat App built in Flutter + Supabase, a TikTok-like app in Flutter, and several web applications using ReactJS, NextJS,React Native, Fast Api and NodeJS.",
   gender: "Muhammad's gender is male.",
   github: "You can visit Muhammad's GitHub profile at https://github.com/MuhamadAsim."
 };
