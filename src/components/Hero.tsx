@@ -79,7 +79,7 @@ export default function Hero() {
               onClick={handleDownloadCV}
               className="relative overflow-hidden inline-flex items-center gap-2 rounded-full bg-foreground px-6 py-3 text-sm font-medium text-background transition-transform duration-300 hover:scale-105 active:scale-95"
             >
-              <span className="relative z-10">Download Resume</span>
+              <span className="relative z-10">Download CV</span>
               {/* Flowing white light */}
               <span className="absolute inset-0 -translate-x-full bg-white/30 blur-lg animate-flowLight"></span>
             </button>
