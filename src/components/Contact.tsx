@@ -141,7 +141,7 @@ return (
             href="tel:+923297208637"
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
-            +92 307 7671282
+            +92 329 7208637
           </a>
         </div>
       </div>

@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import Hero from "@/components/Hero";
 import Projects from "@/components/Projects";
 import About from "@/components/About";
@@ -6,12 +6,16 @@ import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import Chatbot from "@/components/Chatbot";
+import WhatsAppButton from "@/components/WhatsAppButton"; // 👈 new import
 import Skill from "@/components/Skill";
-import Services from "@/components/Services"; // 👈 Import Services
-import Testimonials from "@/components/Testimonials"; // 👈 Import Testimonials
+import Services from "@/components/Services";
+import Testimonials from "@/components/Testimonials";
 
 export default function Index() {
-  // Scroll to hash on load
+  // Tracks whether the chatbot window is open, so the WhatsApp button
+  // can hide itself and not collide with the chat window
+  const [isChatOpen, setIsChatOpen] = useState(false);
+
   useEffect(() => {
     if (window.location.hash) {
       const id = window.location.hash.substring(1);
@@ -22,8 +26,6 @@ export default function Index() {
         }, 100);
       }
     }
-
-    // Update document title
     document.title = "Muhammad Asim | Portfolio";
   }, []);
 
@@ -35,12 +37,13 @@ export default function Index() {
         <Projects />
         <About />
         <Skill />
-        <Services />   
+        <Services />
         <Testimonials />
         <Contact />
       </main>
       <Footer />
-      <Chatbot />
+      <Chatbot onOpenChange={setIsChatOpen} />
+      <WhatsAppButton phoneNumber="923297208637" visible={!isChatOpen} />
     </div>
   );
 }

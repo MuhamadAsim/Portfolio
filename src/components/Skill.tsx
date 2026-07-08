@@ -7,7 +7,7 @@ gsap.registerPlugin(ScrollTrigger);
 
 const skills = [
   "ReactJS", "ExpressJS", "NodeJS", "React Native", "NextJS",
-  "MongoDB", "SQL", "n8n", "Roboflow", "Postman", "Selenium", "AI Integration",
+  "MongoDB", "SQL", "n8n", "RAG", "Postman", "Selenium", "AI Integration",
   "FastAPI", "Python", "JavaScript","TypeScript", "HTML & CSS", 
   "Tailwind CSS", "Gsap", "Git/Github", "Docker", "AWS",
   "Lambda", "EC2", "S3", "Fargate", "ECS", "Supabase"

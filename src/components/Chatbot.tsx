@@ -1,4 +1,3 @@
-
 import { useState, useRef, useEffect } from "react";
 import { MessageSquare, Send, X, MinusCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -9,14 +8,20 @@ interface Message {
   timestamp: Date;
 }
 
+interface ChatbotProps {
+  /** Notifies the parent whenever the chat window opens/closes
+   *  (used to hide the WhatsApp button while chat is open) */
+  onOpenChange?: (isOpen: boolean) => void;
+}
+
 const botResponses: Record<string, string> = {
-  skills: "Muhammad has skills in ReactJS, Angular, Flutter, ExpressJS, NodeJS, MongoDB, SQL, .NET Framework, C++, JavaScript, TypeScript, HTML/CSS, Responsive Design, Git, REST APIs, AI integration, Firebase, Supabase, Tailwind CSS, AWS EC2, AWS ECS, Docker, and mobile app development.",
-  age: "Muhammad is 20 years old.",
-  cgpa: "Muhammad's CGPA is 3.72",
+  skills: "Muhammad has skills in ReactJS, NextJS, ExpressJS, NodeJS, Fast Api, MongoDB, SQL, , C++, JavaScript, Python, TypeScript, HTML/CSS, Responsive Design, Git, REST APIs, AI integration, Firebase, Supabase, Tailwind CSS, AWS EC2, AWS ECS, Docker, and mobile app development.",
+  age: "Muhammad is 21 years old.",
+  cgpa: "Muhammad's CGPA is 3.73",
   contact: "You can contact Muhammad via email at muhammadasim123525@gmail.com or by phone at 03297208637.",
-  location: "Muhammad is based in Multan, Pakistan and can travel to Lahore for meetings or work.",
+  location: "Muhammad is based in Multan, Pakistan and can travel to Lahore, Islamabad for meetings or work.",
   education: "Muhammad is a Computer Science student in his 7th semester at the University of Engineering and Technology Lahore. He completed his FSc from Punjab College Multan (2021-2023) with 86% marks, and his Matric from FG Public High School Multan (2019-2021) with 95% marks.",
-  experience: "Muhammad has over One Year of professional experience as a full-stack developer working in a company and handling client projects. Additionally, he has freelancing experience for over 6 months, managing end-to-end web and mobile development projects.",
+  experience: "Muhammad has over One Year of professional experience as a full-stack developer working in a company and handling client projects. Additionally, he has freelancing experience for over 12 months, managing end-to-end web and mobile development projects.",
   about: "Muhammad Asim is a Full Stack Developer passionate about building web and mobile applications, integrating AI, and solving complex problems through code. He is experienced in both frontend and backend development, as well as handling clients and delivering projects professionally.",
   projects: "Muhammad has worked on SpeakFlow Hub (an AI voice assistant), a Social Media App (Instagram clone), a Realtime Chat App built in Flutter + Supabase, a TikTok-like app in Flutter, and several web applications using ReactJS, NextJS,React Native, Fast Api and NodeJS.",
   gender: "Muhammad's gender is male.",
@@ -53,7 +58,7 @@ const getBotResponse = (message: string): string => {
   }
 };
 
-export default function Chatbot() {
+export default function Chatbot({ onOpenChange }: ChatbotProps) {
   const [isOpen, setIsOpen] = useState(false);
   const [hasClickedOnce, setHasClickedOnce] = useState(false);
   const [isMinimized, setIsMinimized] = useState(false);
@@ -72,6 +77,11 @@ export default function Chatbot() {
       messagesEndRef.current.scrollIntoView({ behavior: "smooth" });
     }
   }, [messages]);
+
+  // Report open/close state to parent (drives WhatsApp button visibility)
+  useEffect(() => {
+    onOpenChange?.(isOpen);
+  }, [isOpen, onOpenChange]);
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -97,9 +107,7 @@ export default function Chatbot() {
     }, 500);
   };
 
-
-
-const handleClick = () => {
+  const handleClick = () => {
     setIsOpen(true);
     setHasClickedOnce(true); // mark as clicked for the session
   };
@@ -118,8 +126,6 @@ const handleClick = () => {
     );
   }
 
-
-
   return (
     <div
       className={cn(
@@ -128,7 +134,6 @@ const handleClick = () => {
         isMinimized ? "h-14" : "h-[500px] max-h-[80vh]"
       )}
     >
-
       {/* Chat header */}
       <div className="flex items-center justify-between bg-primary p-3 text-primary-foreground">
         <h3 className="font-medium">Muhammad's Assistant</h3>
