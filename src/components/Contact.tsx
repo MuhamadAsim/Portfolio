@@ -27,12 +27,12 @@ export default function Contact() {
     setIsSubmitting(true);
 
     // Initialize EmailJS with your public key
-    emailjs.init("x9Y9i3668wvxBbR6t");
+    emailjs.init("EHrEqq7w8Rqgs9EXc");
 
     // Use EmailJS to send the email
     emailjs.send(
-      'service_zvgpaxr', // Replace with your EmailJS service ID
-      'template_yj6jlcq', // Replace with your EmailJS template ID
+      'service_fcf6be9', // Replace with your EmailJS service ID
+      'template_uvdctvr', // Replace with your EmailJS template ID
       {
         from_name: formData.name,
         reply_to: formData.email,
@@ -111,10 +111,10 @@ return (
         <div>
           <p className="text-sm font-medium">Email</p>
           <a
-            href="mailto:muhammadasim123525@gmail.com"
+            href="mailto:raomuhamadasim@gmail.com"
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
-            muhammadasim123525@gmail.com
+            raomuhamadasim@gmail.com
           </a>
         </div>
       </div>

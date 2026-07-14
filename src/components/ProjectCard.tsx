@@ -22,6 +22,15 @@ interface ProjectCardProps {
 // Module-level image cache — persists across re-renders
 const imageCache = new Set<string>();
 
+// ── Animation tuning ──────────────────────────────────────────────────────
+// Kept as named constants so they're easy to tweak without hunting through JSX.
+const TRANSITION_DURATION_MS = 400; // was 700 — snappier fade/slide-in
+const STAGGER_STEP_MS = 60;         // delay added per card position
+const MAX_STAGGER_STEPS = 6;        // hard cap: no card waits more than 6 steps,
+                                     // regardless of how large `index` gets
+                                     // (Projects.tsx triples the array for
+                                     // infinite scroll, so raw index can reach 38+)
+
 export default function ProjectCard({
   id,
   title,
@@ -36,25 +45,37 @@ export default function ProjectCard({
   const [imageError, setImageError] = useState(false);
   const [cardVisible, setCardVisible] = useState(false);
 
-  // Animate card in on scroll
+  // Capped stagger delay — computed once per index, not per render tick.
+  const staggerDelayMs = Math.min(index, MAX_STAGGER_STEPS) * STAGGER_STEP_MS;
+
+  // Animate card in on scroll.
+  // NOTE: we only flip a boolean here. The actual timing (delay + duration)
+  // is handled entirely by CSS below — no setTimeout, so nothing to clean up
+  // and no risk of a late timer firing after the component unmounts.
   useEffect(() => {
+    const node = cardRef.current;
+    if (!node) return;
+
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            setTimeout(() => setCardVisible(true), index * 100);
+            setCardVisible(true);
             observer.unobserve(entry.target);
           }
         });
       },
-      { threshold: 0.1 }
+      {
+        threshold: 0.1,
+        // Trigger slightly before the card is fully in view so the reveal
+        // feels immediate rather than lagging behind the scroll.
+        rootMargin: "0px 0px -60px 0px",
+      }
     );
 
-    if (cardRef.current) observer.observe(cardRef.current);
-    return () => {
-      if (cardRef.current) observer.unobserve(cardRef.current);
-    };
-  }, [index]);
+    observer.observe(node);
+    return () => observer.unobserve(node);
+  }, []);
 
   const handleImageLoad = () => {
     setImageLoaded(true);
@@ -69,8 +90,13 @@ export default function ProjectCard({
   return (
     <div
       ref={cardRef}
+      style={{
+        transitionDelay: cardVisible ? `${staggerDelayMs}ms` : "0ms",
+        transitionDuration: `${TRANSITION_DURATION_MS}ms`,
+        willChange: "opacity, transform",
+      }}
       className={cn(
-        "glass-card group overflow-hidden rounded-2xl flex flex-col transition-all duration-700 ease-out",
+        "glass-card group overflow-hidden rounded-2xl flex flex-col transition-all ease-out",
         cardVisible ? "opacity-100 translate-y-0" : "opacity-60 translate-y-8",
         className
       )}
