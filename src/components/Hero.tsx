@@ -98,12 +98,11 @@ export default function Hero() {
               <span className="absolute inset-0 -translate-x-full bg-white/30 blur-lg animate-flowLight"></span>
             </button>
           </div>
-        </div>
 
-        <div className="absolute bottom-8 left-1/2 -translate-x-1/2 animate-pulse ">
+          {/* Scroll indicator - now in normal document flow, sits below the buttons instead of being pinned to the section's bottom edge */}
           <a
             href="#projects"
-            className="flex flex-col items-center justify-center text-sm font-medium text-muted-foreground transition-colors duration-300 hover:text-foreground"
+            className="mt-10 flex flex-col items-center justify-center text-sm font-medium text-muted-foreground transition-colors duration-300 hover:text-foreground animate-pulse"
             aria-label="Scroll to projects"
           >
             <span className="mb-2 text-xs">Scroll</span>
