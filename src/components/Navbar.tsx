@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef, useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
-import { Menu, X } from "lucide-react";
+import { useLocation } from "react-router-dom";
+import { Menu, X , ArrowUpRight} from "lucide-react";
 import { cn } from "@/lib/utils";
 import { gsap } from "gsap";
 
@@ -8,55 +8,77 @@ export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeHash, setActiveHash] = useState(window.location.hash || "");
+
   const location = useLocation();
 
   // Animation refs
-  const headerScope = useRef<HTMLDivElement>(null);
-  const brandRef = useRef<HTMLSpanElement>(null);
+  const headerScope = useRef<HTMLElement | null>(null);
+  const brandRef = useRef<HTMLSpanElement | null>(null);
   const linkRefs = useRef<HTMLLIElement[]>([]);
-  linkRefs.current = []; // reset on render
+
+  linkRefs.current = [];
 
   const links = [
-    { href: "/#projects", label: "Projects", sectionId: "projects" },
     { href: "/#about", label: "About", sectionId: "about" },
+    { href: "/#projects", label: "Projects", sectionId: "projects" },
     { href: "/#skills", label: "Skills", sectionId: "skills" },
-    { href: "/#services", label: "Services", sectionId: "services" }, // 👈 Add this
     { href: "/#testimonials", label: "Testimonials", sectionId: "testimonials" },
     { href: "/#contact", label: "Contact", sectionId: "contact" },
   ];
 
   // Scroll detection
   useEffect(() => {
-    const onScroll = () => setIsScrolled(window.scrollY > 20);
+    const onScroll = () => {
+      setIsScrolled(window.scrollY > 20);
+    };
+
     window.addEventListener("scroll", onScroll);
-    return () => window.removeEventListener("scroll", onScroll);
+
+    return () => {
+      window.removeEventListener("scroll", onScroll);
+    };
   }, []);
 
   // Listen for hash changes
   useEffect(() => {
-    const onHashChange = () => setActiveHash(window.location.hash);
+    const onHashChange = () => {
+      setActiveHash(window.location.hash);
+    };
+
     window.addEventListener("hashchange", onHashChange);
-    return () => window.removeEventListener("hashchange", onHashChange);
+
+    return () => {
+      window.removeEventListener("hashchange", onHashChange);
+    };
   }, []);
 
   // Close mobile menu on route change
   useEffect(() => {
     setIsMobileMenuOpen(false);
-    setActiveHash(window.location.hash); // update active link when navigating
+    setActiveHash(window.location.hash);
   }, [location]);
 
-  // Animate brand and links
+  // GSAP navbar animation
   useLayoutEffect(() => {
     if (!headerScope.current) return;
 
     const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
+      const tl = gsap.timeline({
+        defaults: {
+          ease: "power3.out",
+        },
+      });
 
       // Brand animation
       if (brandRef.current) {
         tl.fromTo(
           brandRef.current,
-          { y: 100, opacity: 0, rotation: 720, transformOrigin: "center center" },
+          {
+            y: 100,
+            opacity: 0,
+            rotation: 720,
+            transformOrigin: "center center",
+          },
           {
             y: 0,
             opacity: 1,
@@ -68,11 +90,14 @@ export default function Navbar() {
         );
       }
 
-      // Nav links animation
+      // Navigation links animation
       if (linkRefs.current.length) {
         tl.fromTo(
           linkRefs.current,
-          { y: -30, opacity: 0 },
+          {
+            y: -30,
+            opacity: 0,
+          },
           {
             y: 0,
             opacity: 1,
@@ -93,6 +118,7 @@ export default function Navbar() {
       const section = href.replace("/#", "#");
       return activeHash === section;
     }
+
     return location.pathname === href;
   };
 
@@ -101,14 +127,26 @@ export default function Navbar() {
     sectionId: string
   ) => {
     e.preventDefault();
+
     setIsMobileMenuOpen(false);
 
     const el = document.getElementById(sectionId);
-    if (el) el.scrollIntoView({ behavior: "smooth" });
+
+    if (el) {
+      el.scrollIntoView({
+        behavior: "smooth",
+      });
+    }
 
     const newHash = `#${sectionId}`;
-    window.history.pushState(null, "", `/${newHash}`);
-    setActiveHash(newHash); // ✅ immediately update active state
+
+    window.history.pushState(
+      null,
+      "",
+      `/${newHash}`
+    );
+
+    setActiveHash(newHash);
   };
 
   return (
@@ -121,9 +159,11 @@ export default function Navbar() {
           : "bg-transparent py-6"
       )}
     >
-      <div className="container mx-auto flex max-w-6xl items-center justify-between px-4">
-        {/* Brand */}
-        <Link to="/" className="focus:outline-none" aria-label="Home">
+      {/* Desktop / Main Navbar */}
+      <div className="container mx-auto grid max-w-6xl grid-cols-3 items-center px-4">
+
+        {/* Left - Brand */}
+        <div className="justify-self-start">
           <span
             ref={brandRef}
             style={{ opacity: 0 }}
@@ -131,26 +171,32 @@ export default function Navbar() {
           >
             Muhammad Asim
           </span>
-        </Link>
+        </div>
 
-        {/* Desktop Navigation */}
-        <nav className="hidden md:block">
+        {/* Center - Navigation */}
+        <nav className="hidden md:block justify-self-center">
           <ul className="flex items-center gap-8">
             {links.map((link, i) => (
               <li
                 key={link.href}
-                ref={(el) => el && (linkRefs.current[i] = el)}
+                ref={(el) => {
+                  if (el) {
+                    linkRefs.current[i] = el;
+                  }
+                }}
                 style={{ opacity: 0 }}
                 className="will-change-transform"
               >
                 <a
                   href={link.href}
-                  onClick={(e) => handleNavClick(e, link.sectionId)}
+                  onClick={(e) =>
+                    handleNavClick(e, link.sectionId)
+                  }
                   className={cn(
                     "link-hover text-sm font-medium transition-colors duration-300",
                     isActive(link.href)
                       ? "text-primary"
-                      : "text-muted-foreground hover:text-foreground"
+                      : "text-muted-foreground hover:text-primary"
                   )}
                 >
                   {link.label}
@@ -160,50 +206,101 @@ export default function Navbar() {
           </ul>
         </nav>
 
-        {/* Mobile Menu Toggle */}
-        <button
-          className="group md:hidden"
-          onClick={() => setIsMobileMenuOpen(true)}
-          aria-label="Open menu"
-        >
-          <Menu className="h-6 w-6 text-primary" />
-        </button>
+        {/* Right - Resume + Mobile Menu */}
+        <div className="justify-self-end">
+
+          <a
+            href="/Muhammad_Asim_CV.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="group relative hidden md:inline-flex items-center gap-2 overflow-hidden rounded-xl border border-primary/30 bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-[0_0_20px_hsl(var(--primary)/0.15)] transition-all duration-300 hover:-translate-y-0.5 hover:scale-[1.03] hover:border-primary/60 hover:shadow-[0_0_30px_hsl(var(--primary)/0.35)] active:translate-y-0 active:scale-95"
+          >
+            {/* Moving shine */}
+            <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
+
+            {/* Subtle glow */}
+            <span className="absolute inset-0 rounded-xl bg-primary opacity-0 blur-xl transition-opacity duration-300 group-hover:opacity-40" />
+
+            {/* Content */}
+            <span className="relative z-10">
+              Resume
+            </span>
+
+            <ArrowUpRight
+              className="relative z-10 h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+            />
+          </a>
+
+          {/* Mobile Menu Button */}
+          <button
+            className="md:hidden"
+            onClick={() => setIsMobileMenuOpen(true)}
+            aria-label="Open menu"
+          >
+            <Menu className="h-6 w-6 text-primary" />
+          </button>
+
+        </div>
       </div>
 
       {/* Mobile Menu */}
       <div
         className={cn(
-          "fixed top-0 left-0 right-0 z-50 transform transition-transform duration-500 ease-[cubic-bezier(0.68,-0.55,0.27,1.55)] md:hidden",
-          isMobileMenuOpen ? "translate-x-0" : "-translate-x-full"
+          "fixed left-0 right-0 top-0 z-50 transform transition-transform duration-500 ease-[cubic-bezier(0.68,-0.55,0.27,1.55)] md:hidden",
+          isMobileMenuOpen
+            ? "translate-x-0"
+            : "-translate-x-full"
         )}
       >
-        <div className="w-full bg-white dark:bg-neutral-900/95 shadow-lg relative rounded-b-2xl py-3">
+        <div className="relative w-full rounded-b-2xl bg-white py-6 shadow-lg dark:bg-neutral-900/95">
+
           {/* Close button */}
           <button
             onClick={() => setIsMobileMenuOpen(false)}
-            className="absolute top-4 right-4 p-2 rounded-full hover:bg-gray-200 dark:hover:bg-neutral-700 transition"
+            className="absolute right-4 top-4 rounded-full p-2 transition hover:bg-gray-200 dark:hover:bg-neutral-700"
             aria-label="Close menu"
           >
             <X className="h-6 w-6 text-black dark:text-white" />
           </button>
 
-          {/* Menu Links */}
-          <nav className="h-full flex flex-col items-center justify-center">
-            <ul className="flex flex-col gap-4 text-center">
+          {/* Mobile Links */}
+          <nav className="flex items-center justify-center">
+            <ul className="flex flex-col items-center gap-5 text-center">
+
               {links.map((link) => (
                 <li key={link.href}>
                   <a
                     href={link.href}
-                    onClick={(e) => handleNavClick(e, link.sectionId)}
+                    onClick={(e) =>
+                      handleNavClick(e, link.sectionId)
+                    }
                     className={cn(
-                      "text-lg font-semibold text-black dark:text-white transition-colors duration-300 hover:text-primary",
-                      isActive(link.href) && "text-primary"
+                      "text-lg font-semibold transition-colors duration-300",
+                      isActive(link.href)
+                        ? "text-primary"
+                        : "text-black hover:text-primary dark:text-white"
                     )}
                   >
                     {link.label}
                   </a>
                 </li>
               ))}
+
+              {/* Mobile Resume */}
+              <li className="pt-2">
+                <a
+                  href="/Muhammad_Asim_CV.pdf"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() =>
+                    setIsMobileMenuOpen(false)
+                  }
+                  className="inline-flex items-center rounded-full bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground transition-all duration-300 hover:scale-105"
+                >
+                  Resume
+                </a>
+              </li>
+
             </ul>
           </nav>
         </div>

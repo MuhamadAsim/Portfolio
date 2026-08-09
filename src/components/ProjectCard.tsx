@@ -23,13 +23,9 @@ interface ProjectCardProps {
 const imageCache = new Set<string>();
 
 // ── Animation tuning ──────────────────────────────────────────────────────
-// Kept as named constants so they're easy to tweak without hunting through JSX.
-const TRANSITION_DURATION_MS = 400; // was 700 — snappier fade/slide-in
-const STAGGER_STEP_MS = 60;         // delay added per card position
-const MAX_STAGGER_STEPS = 6;        // hard cap: no card waits more than 6 steps,
-                                     // regardless of how large `index` gets
-                                     // (Projects.tsx triples the array for
-                                     // infinite scroll, so raw index can reach 38+)
+const TRANSITION_DURATION_MS = 400;
+const STAGGER_STEP_MS = 60;
+const MAX_STAGGER_STEPS = 6;
 
 export default function ProjectCard({
   id,
@@ -45,13 +41,8 @@ export default function ProjectCard({
   const [imageError, setImageError] = useState(false);
   const [cardVisible, setCardVisible] = useState(false);
 
-  // Capped stagger delay — computed once per index, not per render tick.
   const staggerDelayMs = Math.min(index, MAX_STAGGER_STEPS) * STAGGER_STEP_MS;
 
-  // Animate card in on scroll.
-  // NOTE: we only flip a boolean here. The actual timing (delay + duration)
-  // is handled entirely by CSS below — no setTimeout, so nothing to clean up
-  // and no risk of a late timer firing after the component unmounts.
   useEffect(() => {
     const node = cardRef.current;
     if (!node) return;
@@ -67,8 +58,6 @@ export default function ProjectCard({
       },
       {
         threshold: 0.1,
-        // Trigger slightly before the card is fully in view so the reveal
-        // feels immediate rather than lagging behind the scroll.
         rootMargin: "0px 0px -60px 0px",
       }
     );
@@ -84,7 +73,7 @@ export default function ProjectCard({
 
   const handleImageError = () => {
     setImageError(true);
-    setImageLoaded(true); // stop showing spinner
+    setImageLoaded(true);
   };
 
   return (
@@ -101,14 +90,8 @@ export default function ProjectCard({
         className
       )}
     >
-      {/* ── Image container ─────────────────────────────────────────────────
-          Fixed height (h-48 = 192px) instead of aspect-video so portrait
-          screenshots don't blow up the card. object-cover + object-top keeps
-          the most important part of the screenshot visible.
-      ──────────────────────────────────────────────────────────────────────── */}
+      {/* ── Image container ────────────────────────────────────────────── */}
       <div className="relative h-48 w-full overflow-hidden bg-muted flex-shrink-0">
-
-        {/* Loading skeleton */}
         {!imageLoaded && (
           <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-muted to-muted/80">
             <div className="text-center">
@@ -120,7 +103,6 @@ export default function ProjectCard({
           </div>
         )}
 
-        {/* Error fallback */}
         {imageError ? (
           <div className="absolute inset-0 flex items-center justify-center bg-muted/60">
             <span className="text-xs text-muted-foreground px-4 text-center">
@@ -131,7 +113,6 @@ export default function ProjectCard({
           <img
             src={image}
             alt={title}
-            // object-top so the header/UI of a screenshot stays in frame
             className={cn(
               "h-full w-full object-cover object-top transition-all duration-300 ease-out group-hover:scale-105",
               imageLoaded ? "opacity-100" : "opacity-0"
@@ -142,14 +123,17 @@ export default function ProjectCard({
           />
         )}
 
-        {/* Hover overlay */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/20 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
+        {/*
+          Hover overlay tinted toward primary instead of a flat black gradient —
+          ties the interaction back to your theme color instead of a generic
+          "any dark site" effect.
+        */}
+        <div className="absolute inset-0 bg-gradient-to-t from-primary/30 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
       </div>
 
-      {/* ── Card body ────────────────────────────────────────────────────── */}
+      {/* ── Card body ───────────────────────────────────────────────────── */}
       <div className="flex flex-1 flex-col p-6">
-
-        {/* Tags — show first 4, rest hidden (they're still filterable) */}
+        {/* Tags — show first 4, rest hidden (still filterable) */}
         <div className="mb-3 flex flex-wrap gap-2">
           {tags.slice(0, 4).map((tag, i) => (
             <span
@@ -185,10 +169,14 @@ export default function ProjectCard({
           </Tooltip>
         </TooltipProvider>
 
-        {/* CTA */}
+        {/*
+          CTA — was a random purple/pink/indigo gradient with no relation to
+          the actual theme. Now solid bg-primary, same token used everywhere
+          else on the site (Navbar, Hero curve, About section).
+        */}
         <Link
           to={`/project/${id}`}
-          className="relative overflow-hidden inline-flex items-center justify-center gap-1 text-sm font-medium text-white transition-all duration-300 hover:gap-2 px-4 py-2 rounded-lg bg-gradient-to-r from-purple-500 via-pink-500 to-indigo-500"
+          className="relative overflow-hidden inline-flex items-center justify-center gap-1 text-sm font-medium text-primary-foreground transition-all duration-300 hover:gap-2 hover:bg-primary/90 px-4 py-2 rounded-lg bg-primary"
         >
           <span className="relative z-10 flex items-center gap-1">
             View Project <ArrowUpRight className="h-3.5 w-3.5" />

@@ -232,7 +232,7 @@ function LiveDemoButton({ href }: { href: string }) {
       className="
         relative overflow-hidden inline-flex items-center gap-2 w-full
         justify-center rounded-lg px-4 py-2.5 text-sm font-semibold
-        bg-gradient-to-r from-violet-600 to-indigo-600 text-white
+        bg-primary text-white
         transition-all duration-300 hover:opacity-90 hover:shadow-lg
         hover:shadow-indigo-500/30
       "
@@ -346,8 +346,8 @@ export default function Project() {
 
           <div className="absolute bottom-0 left-0 w-full p-6 md:p-12">
             <div className="container mx-auto max-w-6xl">
-              <h1 className="heading-xl text-white mb-2">{project.title}</h1>
-              <p className="max-w-3xl text-base text-white/80 mb-4">
+              <h1 className="heading-xl text-primary mb-2">{project.title}</h1>
+              <p className="max-w-3xl text-base text-primary font-bold mb-4">
                 {project.description}
               </p>
 
@@ -356,7 +356,7 @@ export default function Project() {
                 className="
                   mt-2 inline-flex items-center gap-1.5 text-sm font-semibold text-white
                   transition-all duration-300 px-4 py-2 rounded-lg
-                  bg-gradient-to-r from-purple-500 via-pink-500 to-indigo-500
+                  bg-primary
                   relative overflow-hidden group hover:opacity-90
                 "
               >
@@ -374,7 +374,7 @@ export default function Project() {
 
             {/* ── Sidebar ── */}
             <div className="glass-card rounded-xl p-6 lg:col-span-1 h-fit space-y-6">
-              <h2 className="text-xl font-semibold">Project Details</h2>
+              <h2 className="text-xl font-semibold text-primary">Project Details</h2>
 
               {/* Meta rows */}
               <div className="space-y-4">
@@ -431,7 +431,7 @@ export default function Project() {
 
             {/* ── Main content ── */}
             <div className="lg:col-span-2">
-              <h2 className="heading-md mb-6">Project Overview</h2>
+              <h2 className="heading-md mb-6 text-primary">Project Overview</h2>
 
               <div className="prose prose-sm max-w-none text-muted-foreground">
                 {project.fullDescription.split("\n\n").map((paragraph, index) => (
@@ -443,7 +443,7 @@ export default function Project() {
 
               {/* Tags */}
               <div className="mt-8">
-                <h3 className="text-lg font-semibold mb-4">Technologies &amp; Skills</h3>
+                <h3 className="text-lg font-semibold mb-4 text-primary">Technologies &amp; Skills</h3>
                 <div className="flex flex-wrap gap-2">
                   {project.tags.map((tag) => (
                     <span

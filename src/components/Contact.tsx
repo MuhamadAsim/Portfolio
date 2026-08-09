@@ -1,4 +1,3 @@
-
 import { useEffect, useRef, useState } from "react";
 import { useToast } from "@/hooks/use-toast";
 import { Mail, MapPin, Send } from "lucide-react";
@@ -26,13 +25,11 @@ export default function Contact() {
     e.preventDefault();
     setIsSubmitting(true);
 
-    // Initialize EmailJS with your public key
     emailjs.init("EHrEqq7w8Rqgs9EXc");
 
-    // Use EmailJS to send the email
     emailjs.send(
-      'service_fcf6be9', // Replace with your EmailJS service ID
-      'template_uvdctvr', // Replace with your EmailJS template ID
+      'service_fcf6be9',
+      'template_uvdctvr',
       {
         from_name: formData.name,
         reply_to: formData.email,
@@ -85,13 +82,25 @@ export default function Contact() {
   }, []);
 return (
   <section id="contact" ref={sectionRef} className="section-container">
+    {/*
+      Plain <style> (not styled-jsx) so this works regardless of whether
+      your build has the styled-jsx babel plugin — a normal <style> tag
+      is valid JSX and works in any React setup, unlike <style jsx>.
+    */}
+    <style>{`
+      @keyframes floatY {
+        0%, 100% { transform: translateY(0px); }
+        50% { transform: translateY(-6px); }
+      }
+      .animate-float {
+        animation: floatY 3s ease-in-out infinite;
+      }
+    `}</style>
+
     <div className="mb-12 text-center md:mb-16">
-      <span className="subheading mb-2 block">Get In Touch</span>
-      <h2 className="heading-lg mb-4">Let's Work Together</h2>
-      <p className="mx-auto max-w-2xl text-muted-foreground">
-        Have a project in mind or just want to say hello? I'd love to hear from you.
-        Fill out the form below and I'll get back to you as soon as possible.
-      </p>
+      {/* Floating animation on the "Get In Touch" pill */}
+      <span className="subheading mb-2 block animate-float">Get In Touch</span>
+      <h2 className="heading-lg text-primary">Let's Work Together</h2>
     </div>
 
     <div className="grid grid-cols-1 gap-12 md:grid-cols-5 md:gap-8 lg:gap-16">
@@ -101,15 +110,17 @@ return (
   className="space-y-6 opacity-0 translate-y-8 transition-all duration-700 ease-out delay-300 md:col-span-2"
 >
   {/* Contact Info Card */}
-  <div className="glass-card rounded-xl p-6 shadow-md shadow-gray-300/30 dark:shadow-black/30 hover:shadow-xl hover:shadow-purple-500/20 transition-shadow duration-500">
-    <h3 className="mb-4 font-display text-xl font-semibold">Contact Information</h3>
+  <div className="glass-card rounded-xl p-6 shadow-md shadow-black/5 dark:shadow-black/30 hover:shadow-xl hover:shadow-primary/20 transition-shadow duration-500">
+    {/* Card heading -> primary */}
+    <h3 className="mb-4 font-display text-xl font-semibold text-primary">Contact Information</h3>
 
     <div className="space-y-4">
       {/* Email */}
       <div className="flex items-start gap-3">
         <Mail className="h-5 w-5 text-muted-foreground" />
         <div>
-          <p className="text-sm font-medium">Email</p>
+          {/* Field label ("Email") -> primary */}
+          <p className="text-sm font-medium text-primary">Email</p>
           <a
             href="mailto:raomuhamadasim@gmail.com"
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -136,7 +147,8 @@ return (
           />
         </svg>
         <div>
-          <p className="text-sm font-medium">Phone</p>
+          {/* Field label ("Phone") -> primary */}
+          <p className="text-sm font-medium text-primary">Phone</p>
           <a
             href="tel:+923297208637"
             className="text-sm text-muted-foreground hover:text-foreground transition-colors"
@@ -150,7 +162,8 @@ return (
       <div className="flex items-start gap-3">
         <MapPin className="h-5 w-5 text-muted-foreground" />
         <div>
-          <p className="text-sm font-medium">Location</p>
+          {/* Field label ("Location") -> primary */}
+          <p className="text-sm font-medium text-primary">Location</p>
           <p className="text-sm text-muted-foreground">
             Multan, Punjab, Pakistan
           </p>
@@ -159,8 +172,9 @@ return (
     </div>
   </div>
 {/* Social Links Card */}
-<div className="glass-card rounded-xl p-6 shadow-md shadow-gray-300/30 dark:shadow-black/30 hover:shadow-xl hover:shadow-purple-500/20 transition-shadow duration-500">
-  <h3 className="mb-4 font-display text-xl font-semibold">Let's Connect</h3>
+<div className="glass-card rounded-xl p-6 shadow-md shadow-black/5 dark:shadow-black/30 hover:shadow-xl hover:shadow-primary/20 transition-shadow duration-500">
+  {/* Card heading -> primary */}
+  <h3 className="mb-4 font-display text-xl font-semibold text-primary">Let's Connect</h3>
   <p className="mb-4 text-sm text-muted-foreground">
     Follow me on social media or check out my work on these platforms.
   </p>
@@ -169,7 +183,7 @@ return (
     {/* LinkedIn */}
     <a
       href="https://www.linkedin.com/in/muhammad-asim-30a654352/"
-      className="glass-card flex h-10 w-10 items-center justify-center rounded-full border border-gray-300 dark:border-gray-600 shadow-sm transition-colors transition-transform duration-300 hover:scale-110 hover:bg-blue-600 hover:text-white"
+      className="glass-card flex h-10 w-10 items-center justify-center rounded-full border border-border shadow-sm transition-colors transition-transform duration-300 hover:scale-110 hover:bg-blue-600 hover:text-white"
       aria-label="LinkedIn"
       target="_blank"
       rel="noopener noreferrer"
@@ -184,7 +198,7 @@ return (
     {/* Fiverr */}
     <a
       href="https://www.fiverr.com/users/asim_fullstack_/"
-      className="glass-card flex h-10 w-10 items-center justify-center rounded-full border border-gray-300 dark:border-gray-600 shadow-sm transition-colors transition-transform duration-300 hover:scale-110 hover:bg-green-500 hover:text-white"
+      className="glass-card flex h-10 w-10 items-center justify-center rounded-full border border-border shadow-sm transition-colors transition-transform duration-300 hover:scale-110 hover:bg-green-500 hover:text-white"
       aria-label="Fiverr"
       target="_blank"
       rel="noopener noreferrer"
@@ -197,7 +211,7 @@ return (
      {/* GitHub */}
     <a
       href="https://github.com/MuhamadAsim"
-      className="glass-card flex h-10 w-10 items-center justify-center rounded-full border border-gray-300 dark:border-gray-600 shadow-sm transition-colors transition-transform duration-300 hover:scale-110 hover:bg-black hover:text-white"
+      className="glass-card flex h-10 w-10 items-center justify-center rounded-full border border-border shadow-sm transition-colors transition-transform duration-300 hover:scale-110 hover:bg-black hover:text-white"
       aria-label="GitHub"
       target="_blank"
       rel="noopener noreferrer"
@@ -210,7 +224,7 @@ return (
     {/* WhatsApp */}
     <a
       href="https://wa.me/923297208637"
-      className="glass-card flex h-10 w-10 items-center justify-center rounded-full border border-gray-300 dark:border-gray-600 shadow-sm transition-colors transition-transform duration-300 hover:scale-110 hover:bg-green-500 hover:text-white"
+      className="glass-card flex h-10 w-10 items-center justify-center rounded-full border border-border shadow-sm transition-colors transition-transform duration-300 hover:scale-110 hover:bg-green-500 hover:text-white"
       aria-label="WhatsApp"
       target="_blank"
       rel="noopener noreferrer"
@@ -254,11 +268,12 @@ return (
       <form
         ref={formRef}
         onSubmit={handleSubmit}
-        className="glass-card rounded-xl p-6 md:p-8 opacity-0 translate-y-8 transition-all duration-700 ease-out md:col-span-3 shadow-lg shadow-gray-300/40 dark:shadow-black/40 hover:shadow-2xl hover:shadow-purple-500/20 transition-shadow duration-500"
+        className="glass-card rounded-xl p-6 md:p-8 opacity-0 translate-y-8 transition-all duration-700 ease-out md:col-span-3 shadow-lg shadow-black/10 dark:shadow-black/40 hover:shadow-2xl hover:shadow-primary/20 transition-shadow duration-500"
       >
         <div className="mb-6 grid grid-cols-1 gap-6 sm:grid-cols-2">
           <div className="space-y-2">
-            <label htmlFor="name" className="text-sm font-medium">
+            {/* Form label "Name" -> primary */}
+            <label htmlFor="name" className="text-sm font-medium text-primary">
               Name
             </label>
             <input
@@ -267,14 +282,15 @@ return (
               value={formData.name}
               onChange={handleChange}
               type="text"
-              className="w-full rounded-lg border border-input bg-background px-4 py-2 text-sm focus:border-foreground focus:outline-none focus:ring-1 focus:ring-foreground"
+              className="w-full rounded-lg border border-input bg-background px-4 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
               placeholder="Your name"
               required
             />
           </div>
 
           <div className="space-y-2">
-            <label htmlFor="email" className="text-sm font-medium">
+            {/* Form label "Email" -> primary */}
+            <label htmlFor="email" className="text-sm font-medium text-primary">
               Email
             </label>
             <input
@@ -283,7 +299,7 @@ return (
               value={formData.email}
               onChange={handleChange}
               type="email"
-              className="w-full rounded-lg border border-input bg-background px-4 py-2 text-sm focus:border-foreground focus:outline-none focus:ring-1 focus:ring-foreground"
+              className="w-full rounded-lg border border-input bg-background px-4 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
               placeholder="Your email"
               required
             />
@@ -291,7 +307,8 @@ return (
         </div>
 
         <div className="mb-6 space-y-2">
-          <label htmlFor="message" className="text-sm font-medium">
+          {/* Form label "Message" -> primary */}
+          <label htmlFor="message" className="text-sm font-medium text-primary">
             Message
           </label>
           <textarea
@@ -300,7 +317,7 @@ return (
             value={formData.message}
             onChange={handleChange}
             rows={6}
-            className="w-full rounded-lg border border-input bg-background px-4 py-2 text-sm focus:border-foreground focus:outline-none focus:ring-1 focus:ring-foreground"
+            className="w-full rounded-lg border border-input bg-background px-4 py-2 text-sm focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary"
             placeholder="Your message"
             required
           />
@@ -309,16 +326,16 @@ return (
 <button
   type="submit"
   disabled={isSubmitting}
-  className="relative overflow-hidden inline-flex items-center gap-2 rounded-lg bg-foreground px-6 py-2.5 text-sm font-medium text-white 
+  className="relative overflow-hidden inline-flex items-center gap-2 rounded-lg bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground 
              transition-all duration-300 ease-out
-             hover:scale-105 hover:shadow-lg hover:shadow-purple-500/30
-             focus:outline-none focus:ring-2 focus:ring-foreground focus:ring-offset-2
+             hover:scale-105 hover:bg-primary/90 hover:shadow-lg hover:shadow-primary/30
+             focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2
              active:scale-95 disabled:opacity-70"
 >
   <span className="relative z-10 flex items-center gap-2">
     {isSubmitting ? (
       <>
-        <svg className="h-4 w-4 animate-spin text-white" viewBox="0 0 24 24">
+        <svg className="h-4 w-4 animate-spin text-primary-foreground" viewBox="0 0 24 24">
           <circle
             className="opacity-25"
             cx="12"
@@ -338,7 +355,7 @@ return (
       </>
     ) : (
       <>
-        Send Message <Send className="h-4 w-4 text-white" />
+        Send Message <Send className="h-4 w-4 text-primary-foreground" />
       </>
     )}
   </span>

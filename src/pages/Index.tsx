@@ -6,7 +6,7 @@ import Contact from "@/components/Contact";
 import Footer from "@/components/Footer";
 import Navbar from "@/components/Navbar";
 import Chatbot from "@/components/Chatbot";
-import WhatsAppButton from "@/components/WhatsAppButton"; // 👈 new import
+import WhatsAppButton from "@/components/WhatsAppButton"; 
 import Skill from "@/components/Skill";
 import Services from "@/components/Services";
 import Testimonials from "@/components/Testimonials";
@@ -34,15 +34,15 @@ export default function Index() {
       <Navbar />
       <main>
         <Hero />
-        <Projects />
         <About />
+        <Projects />
         <Skill />
-        <Services />
+        {/* <Services /> */}
         <Testimonials />
         <Contact />
       </main>
       <Footer />
-      <Chatbot onOpenChange={setIsChatOpen} />
+        <Chatbot onOpenChange={setIsChatOpen} />
       <WhatsAppButton phoneNumber="923297208637" visible={!isChatOpen} />
     </div>
   );

@@ -108,7 +108,6 @@ const projects = [
   },
 ];
 
-// ─── Filter tag definitions ───────────────────────────────────────────────────
 const FILTER_TAGS = [
   "All",
   "MERN",
@@ -120,7 +119,6 @@ const FILTER_TAGS = [
   "Frontend",
 ];
 
-// Tags that belong to the "React Native & Flutter" category
 const MOBILE_TAGS = new Set(["flutter", "react native", "dart"]);
 
 function matchesFilter(project, filter) {
@@ -151,11 +149,8 @@ export default function Projects() {
   const [scrollLeft, setScrollLeft] = useState(0);
   const [visibleImages, setVisibleImages] = useState(new Set());
   const [activeFilter, setActiveFilter] = useState("All");
-
-  // Mobile dropdown open/close state
   const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  // Close dropdown when clicking outside
   useEffect(() => {
     const handleClickOutside = (e) => {
       if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
@@ -185,7 +180,6 @@ export default function Projects() {
     ? [...filteredProjects, ...filteredProjects, ...filteredProjects]
     : filteredProjects;
 
-  // Re-center scroll on filter change
   useEffect(() => {
     const container = scrollContainerRef.current;
     if (!container) return;
@@ -196,7 +190,6 @@ export default function Projects() {
     });
   }, [activeFilter, useInfiniteScroll]);
 
-  // Image preloading via IntersectionObserver
   useEffect(() => {
     const observer = new IntersectionObserver(
       (entries) => {
@@ -217,7 +210,6 @@ export default function Projects() {
     return () => observer.disconnect();
   }, [visibleImages]);
 
-  // ── Arrow scroll ────────────────────────────────────────────────────────────
   const scrollTo = (direction) => {
     const container = scrollContainerRef.current;
     if (!container) return;
@@ -229,7 +221,6 @@ export default function Projects() {
     });
   };
 
-  // ── Drag-to-scroll ──────────────────────────────────────────────────────────
   const handleMouseDown = (e) => {
     if (!scrollContainerRef.current) return;
     setIsDragging(true);
@@ -266,7 +257,6 @@ export default function Projects() {
 
   const handleTouchEnd = () => setIsDragging(false);
 
-  // ── Infinite loop ───────────────────────────────────────────────────────────
   const handleScroll = () => {
     if (!useInfiniteScroll) return;
     const container = scrollContainerRef.current;
@@ -311,27 +301,33 @@ export default function Projects() {
       ref={sectionRef}
       className="section-container relative overflow-hidden"
     >
-      {/* Background blobs */}
-      <div className="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-primary/5 blur-3xl" />
-      <div className="absolute -bottom-32 -left-32 h-96 w-96 rounded-full bg-blue-500/5 blur-[100px]" />
+      {/*
+        Background blobs — both now use the primary token at low opacity
+        instead of one being primary and the other an unrelated blue-500.
+        Kept two different opacities so they still read as distinct layers.
+      */}
+      <div className="absolute -top-24 -right-24 h-64 w-64 rounded-full bg-primary/10 blur-3xl" />
+      <div className="absolute -bottom-32 -left-32 h-96 w-96 rounded-full bg-primary/5 blur-[100px]" />
 
       {/* Header */}
       <div className="relative mb-10 text-center">
         <span className="subheading inline-block mb-3 px-3 py-1 rounded-full bg-secondary text-primary text-xs font-medium uppercase tracking-wider">
           My Work
         </span>
-        <h2 className="heading-lg mb-5 font-display tracking-tight">Recent Projects</h2>
-        <p className="mx-auto max-w-2xl text-muted-foreground">
-          A showcase of my recent development work, highlighting my expertise in the MERN
-          stack, Flutter, modern frontend frameworks, and various programming languages for
-          diverse applications.
-        </p>
+        <h2 className="heading-lg mb-5 font-display tracking-tight text-primary">Recent Projects</h2>
+       
       </div>
 
-      {/* ── Filter Controls ─────────────────────────────────────────────────── */}
+      {/* ── Filter Controls ─────────────────────────────────────────────── */}
       <div className="relative mb-8 flex justify-center">
-
-        {/* ── Desktop: pill row (hidden on mobile) ── */}
+        {/* ── Desktop: pill row ──
+            Active state was hardcoded gray-900/white (a literal black-and-
+            white toggle with no relation to your theme). Now uses
+            bg-primary/text-primary-foreground, same tokens as everywhere
+            else. Inactive state uses border-border/text-muted-foreground
+            (theme-aware) instead of hardcoded gray-200/gray-500, and hovers
+            toward primary instead of a generic darker gray.
+        */}
         <div className="hidden sm:flex flex-wrap justify-center gap-2">
           {FILTER_TAGS.map((tag) => (
             <button
@@ -340,8 +336,8 @@ export default function Projects() {
               className={`px-4 py-1.5 rounded-full text-sm font-medium border transition-all duration-200
                 ${
                   activeFilter === tag
-                    ? "bg-gray-900 text-white border-gray-900 dark:bg-white dark:text-gray-900 dark:border-white"
-                    : "bg-white text-gray-500 border-gray-200 hover:border-gray-400 hover:text-gray-800 dark:bg-transparent dark:text-gray-400 dark:border-gray-700 dark:hover:border-gray-400 dark:hover:text-gray-200"
+                    ? "bg-primary text-primary-foreground border-primary"
+                    : "bg-background text-muted-foreground border-border hover:border-primary hover:text-primary"
                 }`}
             >
               {tag}
@@ -349,24 +345,18 @@ export default function Projects() {
           ))}
         </div>
 
-        {/* ── Mobile: custom dropdown (visible only on mobile) ── */}
-        <div
-          ref={dropdownRef}
-          className="relative sm:hidden w-56"
-        >
-          {/* Trigger button */}
+        {/* ── Mobile: custom dropdown ── */}
+        <div ref={dropdownRef} className="relative sm:hidden w-56">
           <button
             onClick={() => setDropdownOpen((prev) => !prev)}
-            className="w-full flex items-center justify-between gap-2 px-4 py-2.5 rounded-xl text-sm font-medium border border-gray-200 bg-white dark:bg-transparent dark:border-gray-700 dark:text-gray-200 shadow-sm transition-all duration-200"
+            className="w-full flex items-center justify-between gap-2 px-4 py-2.5 rounded-xl text-sm font-medium border border-border bg-background text-foreground shadow-sm transition-all duration-200"
           >
             <span className="flex items-center gap-2">
-              {/* small dot accent */}
-              <span className="h-2 w-2 rounded-full bg-gray-900 dark:bg-white" />
+              <span className="h-2 w-2 rounded-full bg-primary" />
               {activeFilter}
             </span>
-            {/* Chevron — rotates when open */}
             <svg
-              className={`h-4 w-4 text-gray-500 transition-transform duration-200 ${
+              className={`h-4 w-4 text-muted-foreground transition-transform duration-200 ${
                 dropdownOpen ? "rotate-180" : ""
               }`}
               viewBox="0 0 24 24"
@@ -377,9 +367,8 @@ export default function Projects() {
             </svg>
           </button>
 
-          {/* Dropdown panel */}
           {dropdownOpen && (
-            <div className="absolute top-full left-0 mt-2 w-full z-20 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 shadow-xl overflow-hidden">
+            <div className="absolute top-full left-0 mt-2 w-full z-20 rounded-xl border border-border bg-background shadow-xl overflow-hidden">
               {FILTER_TAGS.map((tag) => (
                 <button
                   key={tag}
@@ -387,11 +376,10 @@ export default function Projects() {
                   className={`w-full flex items-center gap-3 px-4 py-2.5 text-sm text-left transition-colors duration-150
                     ${
                       activeFilter === tag
-                        ? "bg-gray-900 text-white dark:bg-white dark:text-gray-900 font-medium"
-                        : "text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800"
+                        ? "bg-primary text-primary-foreground font-medium"
+                        : "text-foreground hover:bg-secondary"
                     }`}
                 >
-                  {/* Checkmark for active item */}
                   <span className="h-4 w-4 flex-shrink-0">
                     {activeFilter === tag && (
                       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" className="h-4 w-4">
@@ -421,20 +409,25 @@ export default function Projects() {
       {/* Scroll area */}
       {filteredProjects.length > 0 && (
         <div className="relative">
+          {/*
+            Arrow buttons — border-gray-200/text-gray-700 -> border-border/
+            text-foreground so they respect light/dark theme instead of
+            being hardcoded to light-mode-only gray values.
+          */}
           <button
             onClick={() => scrollTo("left")}
-            className="absolute left-0 top-1/2 z-10 -translate-y-1/2 -translate-x-4 h-12 w-12 rounded-full bg-white/90 backdrop-blur-sm shadow-lg border border-gray-200 flex items-center justify-center hover:shadow-xl"
+            className="absolute left-0 top-1/2 z-10 -translate-y-1/2 -translate-x-4 h-12 w-12 rounded-full bg-background/90 backdrop-blur-sm shadow-lg border border-border flex items-center justify-center hover:shadow-xl hover:border-primary"
           >
-            <svg className="h-5 w-5 text-gray-700" viewBox="0 0 24 24" stroke="currentColor" fill="none">
+            <svg className="h-5 w-5 text-foreground" viewBox="0 0 24 24" stroke="currentColor" fill="none">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
           </button>
 
           <button
             onClick={() => scrollTo("right")}
-            className="absolute right-0 top-1/2 z-10 -translate-y-1/2 translate-x-4 h-12 w-12 rounded-full bg-white/90 backdrop-blur-sm shadow-lg border border-gray-200 flex items-center justify-center hover:shadow-xl"
+            className="absolute right-0 top-1/2 z-10 -translate-y-1/2 translate-x-4 h-12 w-12 rounded-full bg-background/90 backdrop-blur-sm shadow-lg border border-border flex items-center justify-center hover:shadow-xl hover:border-primary"
           >
-            <svg className="h-5 w-5 text-gray-700" viewBox="0 0 24 24" stroke="currentColor" fill="none">
+            <svg className="h-5 w-5 text-foreground" viewBox="0 0 24 24" stroke="currentColor" fill="none">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
             </svg>
           </button>

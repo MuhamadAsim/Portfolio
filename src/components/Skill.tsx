@@ -6,11 +6,51 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 gsap.registerPlugin(ScrollTrigger);
 
 const skills = [
-  "ReactJS", "ExpressJS", "NodeJS", "React Native", "NextJS",
-  "MongoDB", "SQL", "n8n", "RAG", "Postman", "Selenium", "AI Integration",
-  "FastAPI", "Python", "JavaScript","TypeScript", "HTML & CSS", 
-  "Tailwind CSS", "Gsap", "Git/Github", "Docker", "AWS",
-  "Lambda", "EC2", "S3", "Fargate", "ECS", "Supabase"
+
+
+
+   // Frontend
+  "ReactJS",
+  "NextJS",
+  "React Native",
+  "TypeScript",
+  "JavaScript",
+  "Tailwind CSS",
+
+  // AI / Backend
+  "Python",
+  "FastAPI",
+  "NodeJS",
+  "ExpressJS",
+
+
+
+  // Databases
+  "MongoDB",
+  "PostgreSQL",
+
+  // Cloud / Infrastructure
+  "AWS",
+  "EC2",
+  "Lambda",
+  "Docker",
+
+  // Tools / Automation
+  "n8n",
+  "Git/GitHub",
+  "Postman",
+
+
+   // AI Engineering
+  "LLMs",
+  "AI Agents",
+  "RAG",
+  "LLM Evals",
+  "AI Guardrails",
+  "Observability",
+  "AI Integration",
+  "Embeddings",
+  "Vector DB",
 ];
 
 export default function Skill() {
@@ -116,7 +156,7 @@ export default function Skill() {
         <div ref={leftRef} className="text-center md:text-left overflow-hidden">
           <h3
             ref={titleRef}
-            className="text-2xl font-bold mb-4 relative inline-block rainbow-text"
+            className="text-2xl font-bold mb-4 relative inline-block text-primary"
           >
             Skills & Expertise
           </h3>

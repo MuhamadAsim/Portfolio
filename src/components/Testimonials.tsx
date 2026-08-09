@@ -82,7 +82,7 @@ export default function Testimonials() {
       name: "Ahmed Al-Farouqi",
       role: "Civil Engineer",
       image: "./arbi.PNG",
-      text: "Professional, cooperative, and skilled. Asim brought our vision to life perfectly. I’ll definitely collaborate again!",
+      text: "Professional, cooperative, and skilled. Asim brought our vision to life perfectly. I'll definitely collaborate again!",
       rating: 4.5,
       projectDetails: {
         title: "Worker Attendance Management Android App",
@@ -101,20 +101,25 @@ export default function Testimonials() {
   ];
 
   const handleCardFlip = (index: number) => {
-    setFlippedCards(prev => ({
+    setFlippedCards((prev) => ({
       ...prev,
-      [index]: !prev[index]
+      [index]: !prev[index],
     }));
   };
 
+  // Stars now use the theme's primary color instead of a hardcoded yellow —
+  // yellow/gold stars are a common convention, but on a purple-branded site
+  // it read as an unrelated color dropped in from a template. Empty stars
+  // use a muted border-tone outline instead of flat gray.
   const renderStars = (rating: number) => {
     return Array.from({ length: 5 }, (_, index) => (
       <Star
         key={index}
-        className={`w-4 h-4 ${index < rating
-            ? "fill-yellow-400 text-yellow-400"
-            : "text-gray-300"
-          }`}
+        className={`h-4 w-4 ${
+          index < rating
+            ? "fill-primary text-primary"
+            : "fill-transparent text-muted-foreground/30"
+        }`}
       />
     ));
   };
@@ -123,119 +128,130 @@ export default function Testimonials() {
     <section
       id="testimonials"
       ref={sectionRef}
-      className="section-container relative overflow-hidden bg-gradient-to-b from-white via-purple-50/30 to-white py-20"
+      className="section-container relative overflow-hidden py-20 sm:py-28"
     >
-      {/* Background Effects */}
+      {/*
+        Background blobs — same technique/tokens as Projects.tsx (primary at
+        two opacities) instead of the previous purple/pink + blue/cyan mix,
+        so every section's ambient background reads as one consistent site
+        instead of each section inventing its own palette.
+      */}
       <div className="absolute inset-0 -z-10">
-        <div className="absolute top-10 left-20 w-72 h-72 bg-gradient-to-r from-purple-400/20 to-pink-400/20 rounded-full blur-3xl animate-pulse"></div>
-        <div className="absolute bottom-20 right-20 w-72 h-72 bg-gradient-to-r from-blue-400/20 to-cyan-400/20 rounded-full blur-3xl animate-pulse delay-700"></div>
+        <div className="absolute -top-10 left-10 h-72 w-72 rounded-full bg-primary/10 blur-3xl" />
+        <div className="absolute bottom-0 right-10 h-72 w-72 rounded-full bg-primary/5 blur-3xl" />
       </div>
 
-      {/* Heading */}
+      {/* Header — same pill -> heading -> subtitle pattern as About/Projects/Skills */}
       <div
         ref={headingRef}
-        className="mb-16 text-center opacity-0 transform translate-y-8"
+        className="mb-16 translate-y-8 text-center opacity-0"
       >
-        <span className="inline-block px-4 py-2 mb-4 text-sm font-semibold text-black bg-gradient-to-r from-purple-100 to-pink-100 rounded-full border border-purple-200/50 animate-bounce">
+        <span className="subheading mb-4 inline-block rounded-full bg-secondary px-4 py-1.5 text-xs font-medium uppercase tracking-wider text-primary">
           What Clients Say
         </span>
-        <h2 className="heading-lg mb-6 bg-gradient-to-r bg-clip-text bg-black text-4xl font-bold">
+        <h2 className="heading-lg mb-5 font-display text-4xl font-bold text-primary tracking-tight">
           Testimonials
         </h2>
-        <p className="mx-auto max-w-2xl text-lg text-gray-600 leading-relaxed">
-          Don't just take my word for it — here's what my clients have to say
-          about working with me. Click on any card to see the detailed work I did for them.
-        </p>
+       
       </div>
 
       {/* Testimonials Grid */}
-      <div
-        ref={cardsRef}
-        className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3"
-      >
+      <div ref={cardsRef} className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">
         {testimonials.map((t, i) => (
           <div
             key={i}
-            className="testimonial-card opacity-0 transform translate-y-8 h-80"
+            className="testimonial-card h-96 translate-y-8 opacity-0"
             style={{ perspective: "1000px" }}
           >
             <div
-              className={`relative w-full h-full transition-transform duration-700 transform-style-preserve-3d cursor-pointer ${flippedCards[i] ? "rotate-y-180" : ""
-                }`}
+              className={`relative h-full w-full transform-style-preserve-3d cursor-pointer transition-transform duration-700 ${
+                flippedCards[i] ? "rotate-y-180" : ""
+              }`}
               onClick={() => handleCardFlip(i)}
             >
-              {/* Front Side - Testimonial */}
-              <div className="absolute inset-0 backface-hidden group bg-white/80 dark:bg-gray-900/80 border border-purple-200/40 rounded-2xl shadow-lg hover:shadow-2xl transition-all duration-500 backdrop-blur-sm p-8">
-                {/* Client Image & Info */}
-                <div className="flex items-center gap-4 mb-5">
+              {/*
+                Front — restyled to match the card language already
+                established in Skill.tsx: bg-card/50 + backdrop-blur +
+                border-border, hover lift + primary-tinted glow, instead of
+                white/80 with a hardcoded purple-200 border.
+              */}
+              <div className="group backface-hidden absolute inset-0 flex flex-col rounded-2xl border border-border bg-card/50 p-8 shadow-sm backdrop-blur-sm transition-all duration-300 hover:-translate-y-1 hover:border-primary/40 hover:shadow-lg hover:shadow-primary/10">
+                <div className="mb-5 flex items-center gap-4">
                   <img
                     src={t.image}
                     alt={t.name}
-                    className="w-14 h-14 rounded-full object-cover shadow-md group-hover:scale-110 transition-transform duration-300"
+                    className="h-14 w-14 rounded-full object-cover shadow-md transition-transform duration-300 group-hover:scale-110"
                     loading="lazy"
                     width={56}
                     height={56}
                   />
                   <div className="flex-1">
-                    <h4 className="text-lg font-semibold text-gray-900 dark:text-white">
+                    <h4 className="text-lg font-semibold text-foreground">
                       {t.name}
                     </h4>
-                    <span className="text-sm text-gray-500">{t.role}</span>
+                    <span className="text-sm text-muted-foreground">{t.role}</span>
                   </div>
                 </div>
 
-                {/* Star Rating */}
-                <div className="flex items-center gap-1 mb-4">
+                <div className="mb-4 flex items-center gap-1">
                   {renderStars(t.rating)}
-                  <span className="ml-2 text-sm text-gray-600">({t.rating}/5)</span>
+                  <span className="ml-2 text-sm text-muted-foreground">
+                    ({t.rating}/5)
+                  </span>
                 </div>
 
-                {/* Testimonial Text */}
-                <p className="text-gray-700 dark:text-gray-300 leading-relaxed text-sm mb-4 px-4 flex-1 text-justify">
+                <p className="mb-4 flex-1 text-sm leading-relaxed text-foreground/80">
                   "{t.text}"
                 </p>
 
-                {/* Flip Indicator */}
                 <div className="text-center">
-                  <span className="text-xs text-purple-600 bg-purple-100 px-3 py-1 rounded-full">
+                  <span className="rounded-full bg-primary/10 px-3 py-1 text-xs text-primary">
                     Click to see project details
                   </span>
                 </div>
               </div>
 
-              {/* Back Side - Project Details */}
-              <div className="absolute inset-0 backface-hidden rotate-y-180 bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-200/40 rounded-2xl shadow-lg p-6 overflow-y-auto">
+              {/*
+                Back — was a purple-to-pink gradient (pink has no place in
+                this theme at all). Now uses primary at low opacity, staying
+                inside the same single-hue palette as everything else.
+              */}
+              <div className="backface-hidden rotate-y-180 absolute inset-0 overflow-y-auto rounded-2xl border border-border bg-gradient-to-br from-primary/10 to-primary/5 p-6 shadow-sm">
                 <div className="space-y-4">
                   <div>
-                    <h3 className="text-lg font-bold text-gray-900 mb-2">
+                    <h3 className="mb-2 text-lg font-bold text-foreground">
                       {t.projectDetails.title}
                     </h3>
-                    <p className="text-sm text-gray-600 mb-3">
+                    <p className="mb-3 text-sm text-muted-foreground">
                       {t.projectDetails.description}
                     </p>
                   </div>
 
                   <div>
-                    <h4 className="text-md font-semibold text-gray-800 mb-2">Key Features:</h4>
-                    <ul className="text-xs text-gray-600 space-y-1">
+                    <h4 className="mb-2 text-sm font-semibold text-foreground">
+                      Key Features:
+                    </h4>
+                    <ul className="space-y-1 text-xs text-muted-foreground">
                       {t.projectDetails.features.map((feature, idx) => (
                         <li key={idx} className="flex items-start gap-2">
-                          <span className="text-purple-500 mt-1">•</span>
+                          <span className="mt-1 text-primary">•</span>
                           {feature}
                         </li>
                       ))}
                     </ul>
                   </div>
 
-                  <div className="pt-2 border-t border-purple-200">
-                    <h4 className="text-sm font-semibold text-gray-800 mb-1">Technologies Used:</h4>
-                    <p className="text-xs text-gray-600 bg-white/60 px-2 py-1 rounded">
+                  <div className="border-t border-border pt-2">
+                    <h4 className="mb-1 text-sm font-semibold text-foreground">
+                      Technologies Used:
+                    </h4>
+                    <p className="rounded bg-background/60 px-2 py-1 text-xs text-muted-foreground">
                       {t.projectDetails.technologies}
                     </p>
                   </div>
 
-                  <div className="text-center pt-2">
-                    <span className="text-xs text-purple-600 bg-purple-100 px-3 py-1 rounded-full">
+                  <div className="pt-2 text-center">
+                    <span className="rounded-full bg-primary/10 px-3 py-1 text-xs text-primary">
                       Click to flip back
                     </span>
                   </div>

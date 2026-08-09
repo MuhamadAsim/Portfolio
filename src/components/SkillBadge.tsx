@@ -80,7 +80,7 @@ export default function SkillBadge({ name, className, index = 0 }: SkillBadgePro
       ref={badgeRef}
       className={cn(
         "skill-badge relative overflow-hidden shimmer-light",
-        "hover:animate-wiggle hover:bg-primary/20 hover:text-primary text-center flex items-center justify-center",
+        "hover:animate-wiggle hover:bg-primary hover:text-white text-center flex items-center justify-center",
         "glass-card rounded-full py-1.5 px-3 text-sm font-medium cursor-default transition-colors duration-300",
         "will-change-transform will-change-opacity",
         className

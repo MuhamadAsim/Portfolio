@@ -21,17 +21,17 @@ export default function Footer() {
   };
 
   return (
-    <footer className="border-t border-border bg-background">
+    <footer className="border-t border-border bg-background text-primary">
       <div className="container mx-auto max-w-6xl px-4 py-8">
         <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
           <div className="flex items-center gap-2">
             <span className="font-display text-lg font-bold tracking-tighter">Portfolio</span>
-            <span className="text-sm text-muted-foreground">
+            <span className="text-sm text-primary">
               © {currentYear} Muhammad Asim
             </span>
           </div>
           
-          <div className="text-sm text-muted-foreground">
+          <div className="text-sm text-primary">
             Designed and built with passion
           </div>
         </div>
