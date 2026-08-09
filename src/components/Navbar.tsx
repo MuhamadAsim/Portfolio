@@ -1,6 +1,6 @@
 import { useLayoutEffect, useRef, useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { Menu, X , ArrowUpRight} from "lucide-react";
+import { Menu, X, ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { gsap } from "gsap";
 
@@ -159,22 +159,21 @@ export default function Navbar() {
           : "bg-transparent py-6"
       )}
     >
-      {/* Desktop / Main Navbar */}
-      <div className="container mx-auto grid max-w-6xl grid-cols-3 items-center px-4">
+      <div className="mx-auto grid max-w-6xl grid-cols-2 items-center px-4 md:grid-cols-3">
 
         {/* Left - Brand */}
-        <div className="justify-self-start">
+        <div className="min-w-0 justify-self-start">
           <span
             ref={brandRef}
             style={{ opacity: 0 }}
-            className="font-display text-xl font-bold tracking-tighter text-primary will-change-transform"
+            className="whitespace-nowrap font-display text-base font-bold tracking-tight text-primary will-change-transform md:text-xl md:tracking-tighter"
           >
             Muhammad Asim
           </span>
         </div>
 
-        {/* Center - Navigation */}
-        <nav className="hidden md:block justify-self-center">
+        {/* Center - Desktop Navigation only */}
+        <nav className="hidden justify-self-center md:block">
           <ul className="flex items-center gap-8">
             {links.map((link, i) => (
               <li
@@ -206,104 +205,30 @@ export default function Navbar() {
           </ul>
         </nav>
 
-        {/* Right - Resume + Mobile Menu */}
+        {/* Right - Resume */}
         <div className="justify-self-end">
-
           <a
             href="/Muhammad_Asim_CV.pdf"
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative hidden md:inline-flex items-center gap-2 overflow-hidden rounded-xl border border-primary/30 bg-primary px-5 py-2.5 text-sm font-semibold text-primary-foreground shadow-[0_0_20px_hsl(var(--primary)/0.15)] transition-all duration-300 hover:-translate-y-0.5 hover:scale-[1.03] hover:border-primary/60 hover:shadow-[0_0_30px_hsl(var(--primary)/0.35)] active:translate-y-0 active:scale-95"
+            className="group relative inline-flex items-center gap-1.5 overflow-hidden rounded-lg border border-primary/30 bg-primary px-3.5 py-2 text-xs font-semibold text-primary-foreground shadow-[0_0_15px_hsl(var(--primary)/0.15)] transition-all duration-300 hover:-translate-y-0.5 hover:scale-[1.03] hover:border-primary/60 hover:shadow-[0_0_25px_hsl(var(--primary)/0.35)] active:translate-y-0 active:scale-95 md:gap-2 md:rounded-xl md:px-5 md:py-2.5 md:text-sm"
           >
             {/* Moving shine */}
             <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
 
-            {/* Subtle glow */}
-            <span className="absolute inset-0 rounded-xl bg-primary opacity-0 blur-xl transition-opacity duration-300 group-hover:opacity-40" />
+            {/* Glow */}
+            <span className="absolute inset-0 rounded-lg bg-primary opacity-0 blur-xl transition-opacity duration-300 group-hover:opacity-40 md:rounded-xl" />
 
-            {/* Content */}
             <span className="relative z-10">
               Resume
             </span>
 
             <ArrowUpRight
-              className="relative z-10 h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+              className="relative z-10 h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 md:h-4 md:w-4"
             />
           </a>
-
-          {/* Mobile Menu Button */}
-          <button
-            className="md:hidden"
-            onClick={() => setIsMobileMenuOpen(true)}
-            aria-label="Open menu"
-          >
-            <Menu className="h-6 w-6 text-primary" />
-          </button>
-
         </div>
-      </div>
 
-      {/* Mobile Menu */}
-      <div
-        className={cn(
-          "fixed left-0 right-0 top-0 z-50 transform transition-transform duration-500 ease-[cubic-bezier(0.68,-0.55,0.27,1.55)] md:hidden",
-          isMobileMenuOpen
-            ? "translate-x-0"
-            : "-translate-x-full"
-        )}
-      >
-        <div className="relative w-full rounded-b-2xl bg-white py-6 shadow-lg dark:bg-neutral-900/95">
-
-          {/* Close button */}
-          <button
-            onClick={() => setIsMobileMenuOpen(false)}
-            className="absolute right-4 top-4 rounded-full p-2 transition hover:bg-gray-200 dark:hover:bg-neutral-700"
-            aria-label="Close menu"
-          >
-            <X className="h-6 w-6 text-black dark:text-white" />
-          </button>
-
-          {/* Mobile Links */}
-          <nav className="flex items-center justify-center">
-            <ul className="flex flex-col items-center gap-5 text-center">
-
-              {links.map((link) => (
-                <li key={link.href}>
-                  <a
-                    href={link.href}
-                    onClick={(e) =>
-                      handleNavClick(e, link.sectionId)
-                    }
-                    className={cn(
-                      "text-lg font-semibold transition-colors duration-300",
-                      isActive(link.href)
-                        ? "text-primary"
-                        : "text-black hover:text-primary dark:text-white"
-                    )}
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-
-              {/* Mobile Resume */}
-              <li className="pt-2">
-                <a
-                  href="/Muhammad_Asim_CV.pdf"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  onClick={() =>
-                    setIsMobileMenuOpen(false)
-                  }
-                  className="inline-flex items-center rounded-full bg-primary px-6 py-2.5 text-sm font-medium text-primary-foreground transition-all duration-300 hover:scale-105"
-                >
-                  Resume
-                </a>
-              </li>
-
-            </ul>
-          </nav>
-        </div>
       </div>
     </header>
   );
