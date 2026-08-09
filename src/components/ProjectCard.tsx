@@ -19,13 +19,23 @@ interface ProjectCardProps {
   className?: string;
 }
 
-// Module-level image cache — persists across re-renders
 const imageCache = new Set<string>();
 
 // ── Animation tuning ──────────────────────────────────────────────────────
-const TRANSITION_DURATION_MS = 400;
+// Shared by both the scroll-reveal entrance AND the hover tilt-reset, since
+// only one inline `transitionDuration` can apply to the element's `transform`
+// property at a time. 300ms is a good middle ground — snappy enough for the
+// tilt to feel responsive, slow enough that the entrance doesn't feel rushed.
+const TRANSITION_DURATION_MS = 300;
 const STAGGER_STEP_MS = 60;
 const MAX_STAGGER_STEPS = 6;
+
+// Max tilt rotation in degrees, and max "float toward cursor" translation
+// in pixels. Bumped up significantly from the first pass — 6px was barely
+// perceptible; this is a real, felt displacement now.
+const MAX_TILT_DEG = 8;
+const MAX_FLOAT_PX = 18;
+const LIFT_PX = 10; // additional constant upward lift while hovering at all
 
 export default function ProjectCard({
   id,
@@ -40,6 +50,9 @@ export default function ProjectCard({
   const [imageLoaded, setImageLoaded] = useState(imageCache.has(image));
   const [imageError, setImageError] = useState(false);
   const [cardVisible, setCardVisible] = useState(false);
+  const [tagsPaused, setTagsPaused] = useState(false);
+  const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0, x: 0, y: 0 });
+  const [isHovering, setIsHovering] = useState(false);
 
   const staggerDelayMs = Math.min(index, MAX_STAGGER_STEPS) * STAGGER_STEP_MS;
 
@@ -76,20 +89,78 @@ export default function ProjectCard({
     setImageLoaded(true);
   };
 
+  // ── Magnetic tilt ──
+  // Tracks cursor position relative to the card's center (-1 to 1 on each
+  // axis) and converts that into a slight 3D rotation + a small translate
+  // toward the cursor — the card visually "leans"/"floats" toward wherever
+  // you're pointing, rather than just sitting flat.
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const card = cardRef.current;
+    if (!card) return;
+
+    if (!isHovering) setIsHovering(true);
+
+    const rect = card.getBoundingClientRect();
+    const px = (e.clientX - rect.left) / rect.width; // 0 -> 1 across the card
+    const py = (e.clientY - rect.top) / rect.height;
+    const offsetX = px - 0.5; // -0.5 -> 0.5
+    const offsetY = py - 0.5;
+
+    setTilt({
+      rotateX: -offsetY * MAX_TILT_DEG * 2,
+      rotateY: offsetX * MAX_TILT_DEG * 2,
+      // LIFT_PX is a constant upward offset (-Y) applied on top of the
+      // cursor-following displacement — this is what makes the card
+      // actually leave its resting position rather than just pivot in
+      // place, similar to how the whole card physically rises off the
+      // page toward you before also leaning toward the cursor.
+      x: offsetX * MAX_FLOAT_PX * 2,
+      y: offsetY * MAX_FLOAT_PX * 2 - LIFT_PX,
+    });
+  };
+
+  const handleMouseLeave = () => {
+    setTagsPaused(false);
+    setIsHovering(false);
+    setTilt({ rotateX: 0, rotateY: 0, x: 0, y: 0 });
+  };
+
   return (
     <div
       ref={cardRef}
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
       style={{
         transitionDelay: cardVisible ? `${staggerDelayMs}ms` : "0ms",
         transitionDuration: `${TRANSITION_DURATION_MS}ms`,
         willChange: "opacity, transform",
+        // Once the card has finished its entrance, hand transform control
+        // over to the tilt state. Before that, leave transform alone so the
+        // Tailwind translate-y-8 -> translate-y-0 entrance classes below
+        // still drive the reveal animation untouched.
+        transform: cardVisible
+          ? `perspective(900px) rotateX(${tilt.rotateX}deg) rotateY(${tilt.rotateY}deg) translate3d(${tilt.x}px, ${tilt.y}px, 0) scale(${
+              isHovering ? 1.03 : 1
+            })`
+          : undefined,
       }}
       className={cn(
         "glass-card group overflow-hidden rounded-2xl flex flex-col transition-all ease-out",
-        cardVisible ? "opacity-100 translate-y-0" : "opacity-60 translate-y-8",
+        cardVisible ? "opacity-100" : "opacity-60 translate-y-8",
+        isHovering && "shadow-2xl shadow-primary/20",
         className
       )}
     >
+      <style>{`
+        @keyframes tagMarquee {
+          from { transform: translateX(0); }
+          to { transform: translateX(-50%); }
+        }
+        .tag-marquee-track {
+          animation: tagMarquee 14s linear infinite;
+        }
+      `}</style>
+
       {/* ── Image container ────────────────────────────────────────────── */}
       <div className="relative h-48 w-full overflow-hidden bg-muted flex-shrink-0">
         {!imageLoaded && (
@@ -123,40 +194,36 @@ export default function ProjectCard({
           />
         )}
 
-        {/*
-          Hover overlay tinted toward primary instead of a flat black gradient —
-          ties the interaction back to your theme color instead of a generic
-          "any dark site" effect.
-        */}
         <div className="absolute inset-0 bg-gradient-to-t from-primary/30 to-transparent opacity-0 transition-opacity duration-500 group-hover:opacity-100" />
       </div>
 
       {/* ── Card body ───────────────────────────────────────────────────── */}
       <div className="flex flex-1 flex-col p-6">
-        {/* Tags — show first 4, rest hidden (still filterable) */}
-        <div className="mb-3 flex flex-wrap gap-2">
-          {tags.slice(0, 4).map((tag, i) => (
-            <span
-              key={i}
-              className="rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium text-secondary-foreground"
-            >
-              {tag}
-            </span>
-          ))}
-          {tags.length > 4 && (
-            <span className="rounded-full bg-secondary/60 px-2.5 py-0.5 text-xs font-medium text-muted-foreground">
-              +{tags.length - 4}
-            </span>
-          )}
+        <div
+          className="mb-3 overflow-hidden"
+          onMouseEnter={() => setTagsPaused(true)}
+          onMouseLeave={() => setTagsPaused(false)}
+        >
+          <div
+            className="tag-marquee-track flex w-max gap-2"
+            style={{ animationPlayState: tagsPaused ? "paused" : "running" }}
+          >
+            {[...tags, ...tags].map((tag, i) => (
+              <span
+                key={i}
+                className="shrink-0 rounded-full bg-secondary px-2.5 py-0.5 text-xs font-medium text-secondary-foreground"
+              >
+                {tag}
+              </span>
+            ))}
+          </div>
         </div>
 
-        {/* Title */}
         <h3 className="mb-2 font-display text-xl font-semibold tracking-tight">
           {title}
         </h3>
 
-        {/* Description with tooltip for full text */}
-        <TooltipProvider delayDuration={75}>
+        <TooltipProvider delayDuration={10}>
           <Tooltip>
             <TooltipTrigger asChild>
               <p className="mb-6 flex-1 text-sm text-muted-foreground line-clamp-2 cursor-help">
@@ -169,11 +236,6 @@ export default function ProjectCard({
           </Tooltip>
         </TooltipProvider>
 
-        {/*
-          CTA — was a random purple/pink/indigo gradient with no relation to
-          the actual theme. Now solid bg-primary, same token used everywhere
-          else on the site (Navbar, Hero curve, About section).
-        */}
         <Link
           to={`/project/${id}`}
           className="relative overflow-hidden inline-flex items-center justify-center gap-1 text-sm font-medium text-primary-foreground transition-all duration-300 hover:gap-2 hover:bg-primary/90 px-4 py-2 rounded-lg bg-primary"
