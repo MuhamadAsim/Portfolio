@@ -239,7 +239,15 @@ export default function Skill() {
   // actually preloaded.
   //
   // Runs on every screen size, including mobile — this is the one
-  // animation intentionally kept everywhere. ----
+  // animation intentionally kept everywhere.
+  //
+  // Visibility-gated: an IntersectionObserver starts the rAF loop only
+  // while the wheel is actually on screen, and cancels it the moment it
+  // scrolls out of view — so it costs zero CPU/GPU while the user is up
+  // in the Hero section or has scrolled past into Testimonials/Contact.
+  // Pausing/resuming (rather than tearing down and rebuilding the
+  // progress arrays) means it picks back up mid-lap instead of jumping
+  // or resetting each time it re-enters view. ----
   useEffect(() => {
     if (!imagesReady) return; // wait until every logo is in imageCache
 
@@ -279,7 +287,7 @@ export default function Skill() {
     for (let k = 0; k < slotCount; k++) paintSlot(k);
 
     let lastTime = performance.now();
-    let frameId: number;
+    let frameId: number | null = null;
 
     const animate = (time: number) => {
       const delta = time - lastTime;
@@ -310,8 +318,47 @@ export default function Skill() {
       frameId = requestAnimationFrame(animate);
     };
 
-    frameId = requestAnimationFrame(animate);
-    return () => cancelAnimationFrame(frameId);
+    const startLoop = () => {
+      if (frameId !== null) return; // already running, don't double-schedule
+      // Reset lastTime so the paused duration doesn't get counted as a
+      // single huge `delta` on the next frame (which would make the
+      // wheel visibly "jump" forward the instant it re-enters view).
+      lastTime = performance.now();
+      frameId = requestAnimationFrame(animate);
+    };
+
+    const stopLoop = () => {
+      if (frameId !== null) {
+        cancelAnimationFrame(frameId);
+        frameId = null;
+      }
+    };
+
+    const target = wheelWrapRef.current;
+    let observer: IntersectionObserver | null = null;
+
+    if (target && "IntersectionObserver" in window) {
+      observer = new IntersectionObserver(
+        ([entry]) => {
+          if (entry.isIntersecting) {
+            startLoop();
+          } else {
+            stopLoop();
+          }
+        },
+        { threshold: 0.1 } // starts once ~10% of the wheel is visible
+      );
+      observer.observe(target);
+    } else {
+      // No IntersectionObserver support (very old browsers) — fall back
+      // to always running rather than never animating at all.
+      startLoop();
+    }
+
+    return () => {
+      stopLoop();
+      observer?.disconnect();
+    };
   }, [wheelConfig, imagesReady]);
 
   return (

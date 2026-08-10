@@ -35,6 +35,20 @@ function ParticleNetworkBackground() {
       fullScreen: { enable: false },
       background: { color: { value: "transparent" } },
       fpsLimit: 60,
+
+      // Stop burning CPU/GPU on a simulation nobody's looking at:
+      // - pauseOnOutsideViewport: tsParticles watches the canvas's own
+      //   visibility (internally via IntersectionObserver) and halts the
+      //   whole particle loop the instant it scrolls out of view, resuming
+      //   automatically when it scrolls back in. Since this canvas only
+      //   lives inside the Hero section, this means particles stop moving
+      //   as soon as the user scrolls into Projects/Skills/etc., exactly
+      //   like the wheel and card-marquee gating done elsewhere.
+      // - pauseOnBlur: same idea for when the browser tab itself loses
+      //   focus (switching tabs/apps) — no point animating an invisible tab.
+      pauseOnOutsideViewport: true,
+      pauseOnBlur: true,
+
       particles: {
         number: {
           value: 260,

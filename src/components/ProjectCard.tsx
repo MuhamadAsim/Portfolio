@@ -54,8 +54,18 @@ export default function ProjectCard({
   const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0, x: 0, y: 0 });
   const [isHovering, setIsHovering] = useState(false);
 
+  // Whether the card is currently on screen at all. Unlike `cardVisible`
+  // below (a one-shot "has it ever been revealed" flag used only for the
+  // entrance animation), this tracks live in/out-of-view state for as long
+  // as the card exists, so the infinite tag marquee can be paused the
+  // moment the card scrolls off screen and resumed when it scrolls back —
+  // instead of running its CSS animation indefinitely in the background
+  // regardless of whether anyone can actually see it.
+  const [isInViewport, setIsInViewport] = useState(false);
+
   const staggerDelayMs = Math.min(index, MAX_STAGGER_STEPS) * STAGGER_STEP_MS;
 
+  // One-shot entrance reveal: fires once, then stops observing.
   useEffect(() => {
     const node = cardRef.current;
     if (!node) return;
@@ -73,6 +83,21 @@ export default function ProjectCard({
         threshold: 0.1,
         rootMargin: "0px 0px -60px 0px",
       }
+    );
+
+    observer.observe(node);
+    return () => observer.unobserve(node);
+  }, []);
+
+  // Continuous viewport tracking, kept alive for the card's whole
+  // lifetime, purely to drive the marquee pause/resume below.
+  useEffect(() => {
+    const node = cardRef.current;
+    if (!node) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => setIsInViewport(entry.isIntersecting),
+      { threshold: 0 }
     );
 
     observer.observe(node);
@@ -206,7 +231,13 @@ export default function ProjectCard({
         >
           <div
             className="tag-marquee-track flex w-max gap-2"
-            style={{ animationPlayState: tagsPaused ? "paused" : "running" }}
+            style={{
+              // Paused whenever hovered OR the card isn't currently on
+              // screen — so the infinite marquee never keeps animating
+              // (and consuming compositor time) off screen.
+              animationPlayState:
+                tagsPaused || !isInViewport ? "paused" : "running",
+            }}
           >
             {[...tags, ...tags].map((tag, i) => (
               <span
