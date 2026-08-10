@@ -220,21 +220,30 @@
 
 
 
-/* Shimmer light moving left → right only */
-.shimmer-light::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -100%; /* fully off-screen left */
-  width: 200%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    rgba(255, 255, 255, 0) 20%,
-    rgba(255, 255, 255, 0.8) 50%,
-    rgba(255, 255, 255, 0) 80%
-  );
-  animation: shimmer-move 4s linear infinite;
+/* Shimmer light moving left → right only.
+   Wrapped in a min-width media query so it's completely disabled on
+   mobile (< 768px, matching the MOBILE_BREAKPOINT used elsewhere) —
+   this is a continuous 4s infinite animation running on every single
+   skill badge's ::before pseudo-element, which adds up fast on mobile
+   with ~28 badges all animating at once. Below 768px this rule simply
+   doesn't exist, so `.shimmer-light` on a badge has no visual/animation
+   effect there at all — no JS or component changes needed. */
+@media (min-width: 768px) {
+  .shimmer-light::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: -100%; /* fully off-screen left */
+    width: 200%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0) 20%,
+      rgba(255, 255, 255, 0.8) 50%,
+      rgba(255, 255, 255, 0) 80%
+    );
+    animation: shimmer-move 4s linear infinite;
+  }
 }
 
 @keyframes shimmer-move {
