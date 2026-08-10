@@ -1,4 +1,3 @@
-
 import { useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 
@@ -33,7 +32,7 @@ export default function AnimatedText({
         if (!container) return;
 
         const textNodes = Array.from(container.querySelectorAll(".text-animate"));
-        
+
         textNodes.forEach((node, i) => {
           const charElement = node as HTMLSpanElement;
           charElement.style.animationDelay = `${delay + i * speed}s`;
@@ -50,22 +49,51 @@ export default function AnimatedText({
     };
   }, [text, delay, speed, once]);
 
+  // Split into words so each word can be wrapped in its own no-wrap
+  // span — this keeps every word intact while still letting the line
+  // break between words. The space between two words is rendered as
+  // its own (breakable) span, outside any nowrap wrapper, so that's
+  // the only place the browser is ever allowed to wrap. A running
+  // charIndex keeps the stagger animation (delay + i * speed)
+  // continuous left-to-right across the whole string.
+  const words = text.split(" ");
+  let charIndex = 0;
+
   return (
-    <Component 
+    <Component
       ref={containerRef}
       className={cn("inline-block", className)}
       aria-label={text}
     >
-      {text.split("").map((char, i) => (
-        <span
-          key={`${char}-${i}`}
-          className={cn(
-            "text-animate inline-block opacity-0 transform",
-            char === " " ? "w-[0.3em]" : ""
-          )}
-          aria-hidden="true"
-        >
-          {char}
+      {words.map((word, wi) => (
+        <span key={`word-${wi}`}>
+          <span className="inline-block whitespace-nowrap">
+            {word.split("").map((char) => {
+              const i = charIndex++;
+              return (
+                <span
+                  key={`char-${i}`}
+                  className="text-animate inline-block opacity-0 transform"
+                  aria-hidden="true"
+                >
+                  {char}
+                </span>
+              );
+            })}
+          </span>
+          {wi < words.length - 1 &&
+            (() => {
+              const i = charIndex++;
+              return (
+                <span
+                  key={`space-${wi}`}
+                  className="text-animate inline-block w-[0.3em] opacity-0 transform"
+                  aria-hidden="true"
+                >
+                  {"\u00A0"}
+                </span>
+              );
+            })()}
         </span>
       ))}
     </Component>

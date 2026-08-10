@@ -156,26 +156,46 @@ export default function Skill() {
     return () => window.removeEventListener("resize", handleResize);
   }, []);
 
-  // ---- Badge / title entrance animation (unchanged) ----
+  // ---- Badge / title / wheel-wrap entrance animation ----
+  // On mobile: everything is set straight to its final, visible state —
+  // no GSAP tween runs at all. This is a deliberate performance choice
+  // (mobile devices/browsers are noticeably heavier when running
+  // ScrollTrigger + multiple simultaneous tweens), and it also fixes a
+  // real bug: the wheel-wrap used to get `x: 120` applied unconditionally
+  // (not gated by isMobile), which shifted it 120px past the viewport
+  // edge on load and made the page wider than the screen — that stray
+  // horizontal overflow was what caused the fixed navbar's mobile
+  // clipping glitch until the first scroll event. Setting x straight to
+  // 0 on mobile removes that overflow at the source.
+  //
+  // Desktop keeps the full entrance animation (wheel slide-in, title
+  // spin, badge bounce-stagger) exactly as before.
+  //
+  // The continuous rotating wheel (separate effect below) is untouched
+  // on every screen size — it's a functional loop, not a decorative
+  // entrance animation.
   useEffect(() => {
     if (leftRef.current && titleRef.current) {
       const badges = leftRef.current.querySelectorAll(".skill-badge");
-      const isMobile = window.innerWidth < 768;
+      const isMobile = window.innerWidth < MOBILE_BREAKPOINT;
 
+      if (isMobile) {
+        // No entrance animation on mobile — everything visible immediately,
+        // in its natural resting position. No ScrollTrigger tween needed.
+        gsap.set(badges, { opacity: 1, y: 0 });
+        gsap.set(titleRef.current, { opacity: 1, y: 0, rotation: 0 });
+        if (wheelWrapRef.current) {
+          gsap.set(wheelWrapRef.current, { opacity: 1, x: 0 });
+        }
+        return;
+      }
+
+      // Desktop: original animated entrance
       gsap.set(titleRef.current, { opacity: 0, y: 60 });
       if (wheelWrapRef.current) {
         gsap.set(wheelWrapRef.current, { opacity: 0, x: 120 });
       }
-
-      if (isMobile) {
-        const half = Math.ceil(badges.length / 2);
-        const animateBadges = Array.from(badges).slice(0, half);
-        const visibleBadges = Array.from(badges).slice(half);
-        gsap.set(animateBadges, { opacity: 0, y: 40 });
-        gsap.set(visibleBadges, { opacity: 1, y: 0 });
-      } else {
-        gsap.set(badges, { opacity: 0, y: 40 });
-      }
+      gsap.set(badges, { opacity: 0, y: 40 });
 
       const tl = gsap.timeline({
         scrollTrigger: { trigger: sectionRef.current, start: "top 80%" },
@@ -186,7 +206,7 @@ export default function Skill() {
           x: 0,
           opacity: 1,
           ease: "power3.out",
-          duration: isMobile ? 1.2 : 2,
+          duration: 2,
         });
       }
 
@@ -195,29 +215,19 @@ export default function Skill() {
         {
           y: 0,
           opacity: 1,
-          rotation: isMobile ? 0 : 360,
+          rotation: 360,
           transformOrigin: "center center",
           ease: "power2.out",
-          duration: isMobile ? 1 : 1.8,
+          duration: 1.8,
         },
         "-=0.4"
       );
 
-      if (isMobile) {
-        const half = Math.ceil(badges.length / 2);
-        const animateBadges = Array.from(badges).slice(0, half);
-        tl.to(
-          animateBadges,
-          { opacity: 1, y: 0, ease: "power1.out", duration: 0.8, stagger: 0.08 },
-          "-=0.3"
-        );
-      } else {
-        tl.to(
-          badges,
-          { opacity: 1, y: 0, ease: "bounce.out", duration: 1.2, stagger: 0.08 },
-          "-=0.3"
-        );
-      }
+      tl.to(
+        badges,
+        { opacity: 1, y: 0, ease: "bounce.out", duration: 1.2, stagger: 0.08 },
+        "-=0.3"
+      );
     }
   }, []);
 
@@ -226,7 +236,10 @@ export default function Skill() {
   // Re-runs whenever wheelConfig changes (mobile <-> desktop), since the
   // slot count and radius both feed directly into the position math.
   // Also waits on imagesReady so no slot paints a logo before it's
-  // actually preloaded. ----
+  // actually preloaded.
+  //
+  // Runs on every screen size, including mobile — this is the one
+  // animation intentionally kept everywhere. ----
   useEffect(() => {
     if (!imagesReady) return; // wait until every logo is in imageCache
 
@@ -305,7 +318,7 @@ export default function Skill() {
     <section
       id="skills"
       ref={sectionRef}
-      className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16"
+      className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16 overflow-x-hidden"
     >
       <div className="grid grid-cols-1 md:grid-cols-2 items-center gap-8">
         {/* Left: Title + badges */}

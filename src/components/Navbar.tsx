@@ -1,12 +1,11 @@
 import { useLayoutEffect, useRef, useState, useEffect } from "react";
 import { useLocation } from "react-router-dom";
-import { Menu, X, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { gsap } from "gsap";
 
 export default function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [activeHash, setActiveHash] = useState(window.location.hash || "");
 
   const location = useLocation();
@@ -52,9 +51,8 @@ export default function Navbar() {
     };
   }, []);
 
-  // Close mobile menu on route change
+  // Sync active hash on route change
   useEffect(() => {
-    setIsMobileMenuOpen(false);
     setActiveHash(window.location.hash);
   }, [location]);
 
@@ -69,21 +67,27 @@ export default function Navbar() {
         },
       });
 
-      // Brand animation
+      // Brand animation — kept subtle (no full rotation) on purpose:
+      // a large rotation on a wide, full-viewport `position: fixed`
+      // header can blow the element's bounding box past the visible
+      // width mid-animation, and on mobile WebKit, `overflow-x-hidden`
+      // on a `fixed` ancestor does NOT reliably clip a transformed
+      // descendant. The nav appears to overflow the screen until a
+      // scroll forces WebKit to repaint/re-layer and correct it.
       if (brandRef.current) {
         tl.fromTo(
           brandRef.current,
           {
-            y: 100,
+            y: 20,
             opacity: 0,
-            rotation: 720,
+            scale: 0.85,
             transformOrigin: "center center",
           },
           {
             y: 0,
             opacity: 1,
-            rotation: 0,
-            duration: 0.2,
+            scale: 1,
+            duration: 0.5,
             ease: "back.out(1.7)",
             clearProps: "all",
           }
@@ -105,7 +109,7 @@ export default function Navbar() {
             stagger: 0.35,
             clearProps: "all",
           },
-          "+=1"
+          "+=0.2"
         );
       }
     }, headerScope);
@@ -128,8 +132,6 @@ export default function Navbar() {
   ) => {
     e.preventDefault();
 
-    setIsMobileMenuOpen(false);
-
     const el = document.getElementById(sectionId);
 
     if (el) {
@@ -140,11 +142,7 @@ export default function Navbar() {
 
     const newHash = `#${sectionId}`;
 
-    window.history.pushState(
-      null,
-      "",
-      `/${newHash}`
-    );
+    window.history.pushState(null, "", `/${newHash}`);
 
     setActiveHash(newHash);
   };
@@ -153,27 +151,30 @@ export default function Navbar() {
     <header
       ref={headerScope}
       className={cn(
-        "fixed inset-x-0 top-0 z-50 transition-all duration-300 ease-out",
+        // overflow-x-hidden intentionally removed from this fixed
+        // element — see note above. Clipping now happens on the
+        // non-fixed wrapper div below instead, which WebKit handles
+        // correctly even with transformed children.
+        "fixed inset-x-0 top-0 z-50 w-full transition-all duration-300 ease-out",
         isScrolled
           ? "bg-background/80 backdrop-blur-md shadow-sm py-3"
           : "bg-transparent py-6"
       )}
     >
-      <div className="mx-auto grid max-w-6xl grid-cols-2 items-center px-4 md:grid-cols-3">
-
+      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 overflow-x-hidden px-4">
         {/* Left - Brand */}
-        <div className="min-w-0 justify-self-start">
+        <div className="min-w-0 flex-1 shrink basis-0 md:flex-none">
           <span
             ref={brandRef}
             style={{ opacity: 0 }}
-            className="whitespace-nowrap font-display text-base font-bold tracking-tight text-primary will-change-transform md:text-xl md:tracking-tighter"
+            className="block truncate font-display text-base font-bold tracking-tight text-primary will-change-transform md:text-xl md:tracking-tighter"
           >
             Muhammad Asim
           </span>
         </div>
 
         {/* Center - Desktop Navigation only */}
-        <nav className="hidden justify-self-center md:block">
+        <nav className="hidden shrink-0 md:block">
           <ul className="flex items-center gap-8">
             {links.map((link, i) => (
               <li
@@ -188,9 +189,7 @@ export default function Navbar() {
               >
                 <a
                   href={link.href}
-                  onClick={(e) =>
-                    handleNavClick(e, link.sectionId)
-                  }
+                  onClick={(e) => handleNavClick(e, link.sectionId)}
                   className={cn(
                     "link-hover text-sm font-medium transition-colors duration-300",
                     isActive(link.href)
@@ -205,13 +204,13 @@ export default function Navbar() {
           </ul>
         </nav>
 
-        {/* Right - Resume */}
-        <div className="justify-self-end">
+        {/* Right - Resume (visible on all screen sizes, no mobile dropdown) */}
+        <div className="shrink-0">
           <a
             href="/Muhammad_Asim_CV.pdf"
             target="_blank"
             rel="noopener noreferrer"
-            className="group relative inline-flex items-center gap-1.5 overflow-hidden rounded-lg border border-primary/30 bg-primary px-3.5 py-2 text-xs font-semibold text-primary-foreground shadow-[0_0_15px_hsl(var(--primary)/0.15)] transition-all duration-300 hover:-translate-y-0.5 hover:scale-[1.03] hover:border-primary/60 hover:shadow-[0_0_25px_hsl(var(--primary)/0.35)] active:translate-y-0 active:scale-95 md:gap-2 md:rounded-xl md:px-5 md:py-2.5 md:text-sm"
+            className="group relative inline-flex shrink-0 items-center gap-1.5 overflow-hidden whitespace-nowrap rounded-lg border border-primary/30 bg-primary px-3.5 py-2 text-xs font-semibold text-primary-foreground shadow-[0_0_15px_hsl(var(--primary)/0.15)] transition-all duration-300 hover:-translate-y-0.5 hover:scale-[1.03] hover:border-primary/60 hover:shadow-[0_0_25px_hsl(var(--primary)/0.35)] active:translate-y-0 active:scale-95 md:gap-2 md:rounded-xl md:px-5 md:py-2.5 md:text-sm"
           >
             {/* Moving shine */}
             <span className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/25 to-transparent transition-transform duration-700 group-hover:translate-x-full" />
@@ -219,16 +218,11 @@ export default function Navbar() {
             {/* Glow */}
             <span className="absolute inset-0 rounded-lg bg-primary opacity-0 blur-xl transition-opacity duration-300 group-hover:opacity-40 md:rounded-xl" />
 
-            <span className="relative z-10">
-              Resume
-            </span>
+            <span className="relative z-10">Resume</span>
 
-            <ArrowUpRight
-              className="relative z-10 h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 md:h-4 md:w-4"
-            />
+            <ArrowUpRight className="relative z-10 h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 md:h-4 md:w-4" />
           </a>
         </div>
-
       </div>
     </header>
   );

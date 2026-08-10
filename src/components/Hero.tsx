@@ -29,8 +29,9 @@ export default function Hero() {
       <ParticleNetworkBackground />
 
       {/* Text renders instantly — no entrance delay */}
+      {/* Sits higher up on mobile (top-[22%]); centers vertically from sm: up */}
       <div
-        className={`absolute inset-x-0 top-1/2 w-full -translate-y-1/2 px-6 text-center transition-all duration-500 sm:px-4 ${
+        className={`absolute inset-x-0 top-[22%] w-full px-6 text-center transition-all duration-500 sm:top-1/2 sm:-translate-y-1/2 sm:px-4 ${
           isPhotoActive ? "z-30" : "z-10"
         }`}
       >
@@ -39,16 +40,15 @@ export default function Hero() {
         <AnimatedText
           text="Full Stack Developer"
           delay={0.4}
-          className="mx-auto block max-w-full whitespace-normal break-words font-display text-3xl font-extrabold uppercase leading-tight tracking-tight text-transparent [-webkit-text-stroke:1.5px_#a855f7] xs:text-4xl sm:whitespace-nowrap sm:text-6xl sm:leading-none md:text-7xl"
+          className="mx-auto block max-w-full whitespace-normal break-normal font-display text-3xl font-extrabold uppercase leading-tight tracking-tight text-transparent [-webkit-text-stroke:1.5px_#a855f7] xs:text-5xl sm:whitespace-nowrap sm:text-6xl sm:leading-none md:text-7xl"
         />
         <AnimatedText
           text="and AI Engineer"
           delay={0.6}
-          className="mx-auto block max-w-full whitespace-normal break-words font-display text-3xl font-extrabold uppercase leading-tight tracking-tight text-transparent [-webkit-text-stroke:1.5px_#a855f7] xs:text-4xl sm:whitespace-nowrap sm:text-6xl sm:leading-none md:text-7xl"
+          className="mx-auto block max-w-full whitespace-normal break-normal font-display text-3xl font-extrabold uppercase leading-tight tracking-tight text-transparent [-webkit-text-stroke:1.5px_#a855f7] xs:text-5xl sm:whitespace-nowrap sm:text-6xl sm:leading-none md:text-7xl"
         />
       </div>
 
-    
       <div
         className={`relative h-[70vh] max-h-[780px] w-auto cursor-pointer transition-all duration-700 ease-out sm:h-[85vh] ${
           imageLoaded
