@@ -83,7 +83,7 @@ export default function Navbar() {
             y: 0,
             opacity: 1,
             rotation: 0,
-            duration: 1.5,
+            duration: 0.2,
             ease: "back.out(1.7)",
             clearProps: "all",
           }
@@ -101,7 +101,7 @@ export default function Navbar() {
           {
             y: 0,
             opacity: 1,
-            duration: 0.6,
+            duration: 0.4,
             stagger: 0.35,
             clearProps: "all",
           },

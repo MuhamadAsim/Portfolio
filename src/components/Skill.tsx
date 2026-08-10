@@ -90,6 +90,29 @@ const getWheelConfig = (): WheelConfig => {
     : { slotCount: 8, radius: 150 };
 };
 
+// ---- Image preload cache ----
+// Module-level (not component state) so it persists across remounts —
+// e.g. when wheelConfig changes and the wheel div remounts via
+// `key={wheelConfig.slotCount}`, or if Skill itself unmounts/remounts
+// during route changes. Once a logo is loaded, it's loaded for the
+// lifetime of the page — img.src assignments after that resolve
+// instantly from the browser's decoded image cache instead of firing
+// a new network request.
+const imageCache = new Map<string, HTMLImageElement>();
+
+const preloadImage = (src: string): Promise<void> => {
+  if (imageCache.has(src)) return Promise.resolve(); // already loaded, skip
+  return new Promise((resolve) => {
+    const img = new Image();
+    img.onload = () => {
+      imageCache.set(src, img);
+      resolve();
+    };
+    img.onerror = () => resolve(); // don't let one bad path block the rest
+    img.src = src;
+  });
+};
+
 export default function Skill() {
   const sectionRef = useRef<HTMLElement>(null);
   const leftRef = useRef<HTMLDivElement>(null);
@@ -104,6 +127,18 @@ export default function Skill() {
 
   // Responsive wheel config (slot count + radius) — recalculated on resize
   const [wheelConfig, setWheelConfig] = useState<WheelConfig>(getWheelConfig);
+
+  // True once every logo image in techStack has been preloaded into
+  // imageCache. The wheel animation waits for this before it starts
+  // painting slots, so the very first lap doesn't trigger live fetches.
+  const [imagesReady, setImagesReady] = useState(false);
+
+  useEffect(() => {
+    const uniqueLogos = Array.from(
+      new Set(techStack.filter((t) => isImageLogo(t.logo)).map((t) => t.logo))
+    );
+    Promise.all(uniqueLogos.map(preloadImage)).then(() => setImagesReady(true));
+  }, []);
 
   useEffect(() => {
     const handleResize = () => {
@@ -189,8 +224,12 @@ export default function Skill() {
   // ---- Front-facing wheel: fixed spokes rotating together, content
   // swapped one at a time whenever a spoke passes the bottom (6 o'clock).
   // Re-runs whenever wheelConfig changes (mobile <-> desktop), since the
-  // slot count and radius both feed directly into the position math. ----
+  // slot count and radius both feed directly into the position math.
+  // Also waits on imagesReady so no slot paints a logo before it's
+  // actually preloaded. ----
   useEffect(() => {
+    if (!imagesReady) return; // wait until every logo is in imageCache
+
     const { slotCount, radius } = wheelConfig;
     const N = techStack.length;
     const speed = 1 / LAP_DURATION; // laps-per-ms
@@ -210,6 +249,8 @@ export default function Skill() {
       if (!img || !emoji || !name) return;
 
       if (isImageLogo(tech.logo)) {
+        // Backed by imageCache at this point — this is a cache read,
+        // not a network request.
         img.src = tech.logo;
         img.alt = tech.name;
         img.style.display = "block";
@@ -258,7 +299,7 @@ export default function Skill() {
 
     frameId = requestAnimationFrame(animate);
     return () => cancelAnimationFrame(frameId);
-  }, [wheelConfig]);
+  }, [wheelConfig, imagesReady]);
 
   return (
     <section
