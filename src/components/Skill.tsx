@@ -72,7 +72,7 @@ const techStack = [
 const isImageLogo = (logo: string) => /\.(png|jpe?g)$/i.test(logo);
 
 // One full lap per slot, in ms — how long a card takes to go all the way around
-const LAP_DURATION = 8000;
+const LAP_DURATION = 9000;
 
 // Breakpoint matching the isMobile check used elsewhere in this file
 const MOBILE_BREAKPOINT = 768;
@@ -86,7 +86,7 @@ const getWheelConfig = (): WheelConfig => {
     return { slotCount: 8, radius: 150 }; // sensible default for SSR
   }
   return window.innerWidth < MOBILE_BREAKPOINT
-    ? { slotCount: 6, radius: 110 }
+    ? { slotCount: 5, radius: 110 }
     : { slotCount: 8, radius: 150 };
 };
 
