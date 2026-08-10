@@ -128,7 +128,7 @@ export default function Testimonials() {
     <section
       id="testimonials"
       ref={sectionRef}
-      className="section-container relative overflow-hidden py-20 sm:py-28"
+      className="section-container relative overflow-hidden py-10 sm:py-18"
     >
       {/*
         Background blobs — same technique/tokens as Projects.tsx (primary at
