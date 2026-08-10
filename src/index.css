@@ -277,9 +277,9 @@
 }
 
 .animate-bounce-shake {
-  animation: bounce-shake 3s ease-in-out;
+  animation: bounce-shake 2s ease-in-out;
   animation-iteration-count: infinite;
-  animation-delay: 4s; 
+  animation-delay: 5s; 
 }
 
 
