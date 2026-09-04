@@ -30,7 +30,7 @@ const App = () => {
         <ClickEffect />
         <Toaster />
         <Sonner />
-        <BrowserRouter>
+<BrowserRouter basename="/Portfolio">
           <Suspense fallback={null}>
             <Routes>
               <Route path="/" element={<Index />} />
