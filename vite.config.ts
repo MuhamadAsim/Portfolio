@@ -17,4 +17,14 @@ export default defineConfig(({ mode }) => ({
       "@": path.resolve(__dirname, "./src"),
     },
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          particles: ["@tsparticles/engine", "@tsparticles/react", "@tsparticles/slim"],
+          gsap: ["gsap"],
+        },
+      },
+    },
+  },
 }));

@@ -3,9 +3,10 @@ import ParticleNetworkBackground from "./ParticleNetworkBackground";
 import { useEffect, useRef, useState } from "react";
 
 export default function Hero() {
-  // True once the profile image has actually finished downloading
-  // (not just after an arbitrary timer).
-  const [imageLoaded, setImageLoaded] = useState(false);
+  // True because profile image was already pre-downloaded & decoded by Loader
+  const [imageLoaded, setImageLoaded] = useState(true);
+  const [isHeroInView, setIsHeroInView] = useState(true);
+  const heroRef = useRef<HTMLElement>(null);
   const imgRef = useRef<HTMLImageElement>(null);
 
   // Tracks whether the photo is currently "pushed back" (hovered on
@@ -14,19 +15,34 @@ export default function Hero() {
   const [isPhotoActive, setIsPhotoActive] = useState(false);
 
   useEffect(() => {
-    // Handles the case where the image is served from browser cache and
-    // is already "complete" before onLoad has a chance to fire.
     if (imgRef.current?.complete) {
       setImageLoaded(true);
     }
   }, []);
 
+  // Compute power optimization: pause particles RAF loop when Hero is scrolled out of view
+  useEffect(() => {
+    const node = heroRef.current;
+    if (!node || !("IntersectionObserver" in window)) return;
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsHeroInView(entry.isIntersecting);
+      },
+      { threshold: 0 }
+    );
+
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
   return (
     <section
+      ref={heroRef}
       className="relative isolate flex min-h-screen items-end justify-center overflow-hidden bg-gradient-to-b from-purple-50 via-white to-white"
       id="about"
     >
-      <ParticleNetworkBackground />
+      <ParticleNetworkBackground isActive={isHeroInView} />
 
       {/* Text renders instantly — no entrance delay */}
       {/* Sits higher up on mobile (top-[22%]); centers vertically from sm: up */}

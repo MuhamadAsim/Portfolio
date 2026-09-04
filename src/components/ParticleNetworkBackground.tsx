@@ -1,13 +1,20 @@
-"use client";
-
-import { useEffect, useMemo, useState, memo } from "react";
+import { useEffect, useMemo, useState, memo, useRef } from "react";
 import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { loadSlim } from "@tsparticles/slim";
-import type { ISourceOptions } from "@tsparticles/engine";
+import type { Container, ISourceOptions } from "@tsparticles/engine";
 
-function ParticleNetworkBackground() {
+interface ParticleNetworkBackgroundProps {
+  id?: string;
+  isActive?: boolean;
+}
+
+function ParticleNetworkBackground({
+  id = "hero-particles",
+  isActive = true,
+}: ParticleNetworkBackgroundProps) {
   const [ready, setReady] = useState(false);
   const [initError, setInitError] = useState<string | null>(null);
+  const containerRef = useRef<Container | null>(null);
 
   useEffect(() => {
     initParticlesEngine(async (engine) => {
@@ -15,12 +22,20 @@ function ParticleNetworkBackground() {
     })
       .then(() => setReady(true))
       .catch((err) => {
-        // Previously this failure was swallowed silently — if the engine
-        // package versions are still mismatched, THIS is what tells you.
         console.error("tsParticles failed to initialize:", err);
         setInitError(String(err));
       });
   }, []);
+
+  // Pause / resume simulation when active state changes (e.g. hero scrolls in/out of view)
+  useEffect(() => {
+    if (!containerRef.current) return;
+    if (isActive) {
+      containerRef.current.play();
+    } else {
+      containerRef.current.pause();
+    }
+  }, [isActive]);
 
   if (initError) {
     // Visible in dev so it's obvious the background isn't just "invisible" —
@@ -115,10 +130,16 @@ function ParticleNetworkBackground() {
 
   return (
     <Particles
-      id="hero-particles"
+      id={id}
       className="absolute inset-0 -z-10"
       style={{ position: "absolute", inset: 0, width: "100%", height: "100%" }}
       options={options}
+      particlesLoaded={async (container) => {
+        containerRef.current = container || null;
+        if (container && !isActive) {
+          container.pause();
+        }
+      }}
     />
   );
 }
